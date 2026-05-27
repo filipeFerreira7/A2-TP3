@@ -1,0 +1,6 @@
+@a2_tp3_job_connect_HostAddress = http://localhost:5296
+
+GET {{a2_tp3_job_connect_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
