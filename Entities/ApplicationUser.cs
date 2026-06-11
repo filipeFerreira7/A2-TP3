@@ -9,9 +9,9 @@ public class ApplicationUser : IdentityUser<Guid>
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public CandidateProfile? CandidateProfile { get; set; }
-    public ICollection<CompanyUser> CompanyUsers { get; set; } = [];
-    public ICollection<JobPosting> CreatedJobs { get; set; } = [];
-    public ICollection<Notification> Notifications { get; set; } = [];
-    public ICollection<AuditLog> AuditLogs { get; set; } = [];
+    public PerfilCandidato? CandidateProfile { get; set; }
+    public ICollection<UsuarioEmpresa> CompanyUsers { get; set; } = [];
+    public ICollection<Vaga> CreatedJobs { get; set; } = [];
+    public ICollection<Notificacao> Notifications { get; set; } = [];
+    public ICollection<RegistroAuditoria> AuditLogs { get; set; } = [];
 }

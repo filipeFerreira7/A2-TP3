@@ -235,16 +235,17 @@ namespace a2_tp3_job_connect.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.AuditLog", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.AprovacaoVaga", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
+                    b.Property<bool>("Approved")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ApprovedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -252,41 +253,203 @@ namespace a2_tp3_job_connect.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("EntityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EntityName")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
-
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("NewValues")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("JobPostingId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PreviousValues")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("UserId")
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByUserId");
+
+                    b.HasIndex("JobPostingId");
+
+                    b.ToTable("AprovacoesVagas", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.AvaliacaoCandidato", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comments")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EvaluatorUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SelectionProcessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("EvaluatorUserId");
 
-                    b.ToTable("AuditLogs");
+                    b.HasIndex("SelectionProcessId");
+
+                    b.ToTable("AvaliacoesCandidatos", (string)null);
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CandidateDocument", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Candidatura", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AppliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AvailabilityPreference")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid>("CandidateProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExperienceNotes")
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobPostingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResumeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SalaryExpectation")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateProfileId");
+
+                    b.HasIndex("ResumeId");
+
+                    b.HasIndex("JobPostingId", "CandidateProfileId")
+                        .IsUnique();
+
+                    b.ToTable("Candidaturas", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Curriculo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CandidateProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateProfileId")
+                        .IsUnique();
+
+                    b.ToTable("Curriculos", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.CurriculoHabilidade", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProficiencyLevel")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ResumeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkillId");
+
+                    b.HasIndex("ResumeId", "SkillId")
+                        .IsUnique();
+
+                    b.ToTable("CurriculosHabilidades", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.DocumentoCandidato", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -334,108 +497,10 @@ namespace a2_tp3_job_connect.Migrations
 
                     b.HasIndex("ResumeId");
 
-                    b.ToTable("CandidateDocuments");
+                    b.ToTable("DocumentosCandidatos", (string)null);
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CandidateEvaluation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Comments")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("EvaluatorUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("SelectionProcessId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EvaluatorUserId");
-
-                    b.HasIndex("SelectionProcessId");
-
-                    b.ToTable("CandidateEvaluations");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CandidateProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly>("BirthDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkedInUrl")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("PortfolioUrl")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Cpf")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("CandidateProfiles");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Company", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Empresa", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -489,10 +554,10 @@ namespace a2_tp3_job_connect.Migrations
                     b.HasIndex("Cnpj")
                         .IsUnique();
 
-                    b.ToTable("Companies");
+                    b.ToTable("Empresas", (string)null);
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CompanyAddress", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.EnderecoEmpresa", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -558,509 +623,10 @@ namespace a2_tp3_job_connect.Migrations
                     b.HasIndex("CompanyId")
                         .IsUnique();
 
-                    b.ToTable("CompanyAddresses");
+                    b.ToTable("EnderecosEmpresa", (string)null);
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CompanyUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("CompanyId", "UserId", "Role")
-                        .IsUnique();
-
-                    b.ToTable("CompanyUsers");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Education", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Course")
-                        .IsRequired()
-                        .HasMaxLength(140)
-                        .HasColumnType("nvarchar(140)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Degree")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Institution")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("ResumeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResumeId");
-
-                    b.ToTable("Educations");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Feedback", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsAutomatic")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<Guid>("SelectionProcessId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("SelectionProcessId");
-
-                    b.ToTable("Feedbacks");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobApplication", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("AppliedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CandidateProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobPostingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ResumeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CandidateProfileId");
-
-                    b.HasIndex("ResumeId");
-
-                    b.HasIndex("JobPostingId", "CandidateProfileId")
-                        .IsUnique();
-
-                    b.ToTable("JobApplications");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobApproval", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Approved")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("ApprovedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobPostingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApprovedByUserId");
-
-                    b.HasIndex("JobPostingId");
-
-                    b.ToTable("JobApprovals");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobPosting", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ClosingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal?>("MaximumSalary")
-                        .HasColumnType("decimal(12,2)");
-
-                    b.Property<decimal?>("MinimumSalary")
-                        .HasColumnType("decimal(12,2)");
-
-                    b.Property<int>("OpenPositions")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("PublishedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Tags")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(140)
-                        .HasColumnType("nvarchar(140)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("WorkModel")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("CompanyId", "Title", "ClosingDate")
-                        .IsUnique();
-
-                    b.ToTable("JobPostings");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobSkill", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobPostingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("RequirementType")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<Guid>("SkillId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SkillId");
-
-                    b.HasIndex("JobPostingId", "SkillId")
-                        .IsUnique();
-
-                    b.ToTable("JobSkills");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime?>("ReadAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Resume", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CandidateProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CandidateProfileId")
-                        .IsUnique();
-
-                    b.ToTable("Resumes");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.ResumeSkill", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProficiencyLevel")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ResumeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SkillId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SkillId");
-
-                    b.HasIndex("ResumeId", "SkillId")
-                        .IsUnique();
-
-                    b.ToTable("ResumeSkills");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.SelectionProcess", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CurrentStageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsFinished")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobApplicationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CurrentStageId");
-
-                    b.HasIndex("JobApplicationId")
-                        .IsUnique();
-
-                    b.ToTable("SelectionProcesses");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.SelectionStage", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.EtapaSelecao", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1098,97 +664,10 @@ namespace a2_tp3_job_connect.Migrations
                         .IsUnique()
                         .HasFilter("[CompanyId] IS NOT NULL");
 
-                    b.ToTable("SelectionStages");
+                    b.ToTable("EtapasSelecao", (string)null);
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Skill", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Skills");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.StageMovementHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChangedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("FromStageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("ResultingStatus")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<Guid>("SelectionProcessId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ToStageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChangedByUserId");
-
-                    b.HasIndex("FromStageId");
-
-                    b.HasIndex("SelectionProcessId");
-
-                    b.HasIndex("ToStageId");
-
-                    b.ToTable("StageMovementHistories");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.WorkExperience", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.ExperienciaProfissional", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1237,7 +716,558 @@ namespace a2_tp3_job_connect.Migrations
 
                     b.HasIndex("ResumeId");
 
-                    b.ToTable("WorkExperiences");
+                    b.ToTable("ExperienciasProfissionais", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Feedback", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAutomatic")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("SelectionProcessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("SelectionProcessId");
+
+                    b.ToTable("Feedbacks", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Formacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Course")
+                        .IsRequired()
+                        .HasMaxLength(140)
+                        .HasColumnType("nvarchar(140)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Degree")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Institution")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ResumeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResumeId");
+
+                    b.ToTable("Formacoes", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Habilidade", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Habilidades", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.HistoricoMovimentoEtapa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChangedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("FromStageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ResultingStatus")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid>("SelectionProcessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ToStageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangedByUserId");
+
+                    b.HasIndex("FromStageId");
+
+                    b.HasIndex("SelectionProcessId");
+
+                    b.HasIndex("ToStageId");
+
+                    b.ToTable("HistoricosMovimentosEtapas", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Notificacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notificacoes", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.PerfilCandidato", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("PortfolioUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Cpf")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PerfisCandidatos", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.ProcessoSeletivo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CurrentStageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFinished")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrentStageId");
+
+                    b.HasIndex("JobApplicationId")
+                        .IsUnique();
+
+                    b.ToTable("ProcessosSeletivos", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.RegistroAuditoria", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreviousValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RegistrosAuditoria", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.UsuarioEmpresa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("CompanyId", "UserId", "Role")
+                        .IsUnique();
+
+                    b.ToTable("UsuariosEmpresa", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Vaga", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Benefits")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ClosingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CompanyDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("MaximumSalary")
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal?>("MinimumSalary")
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<int>("OpenPositions")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Requirements")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Responsibilities")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Schedule")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Tags")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(140)
+                        .HasColumnType("nvarchar(140)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WorkModel")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("CompanyId", "Title", "ClosingDate")
+                        .IsUnique();
+
+                    b.ToTable("Vagas", (string)null);
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.VagaHabilidade", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobPostingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RequirementType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkillId");
+
+                    b.HasIndex("JobPostingId", "SkillId")
+                        .IsUnique();
+
+                    b.ToTable("VagasHabilidades", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1291,28 +1321,26 @@ namespace a2_tp3_job_connect.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.AuditLog", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.AprovacaoVaga", b =>
                 {
-                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "User")
-                        .WithMany("AuditLogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "ApprovedByUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CandidateDocument", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.Resume", "Resume")
-                        .WithMany("Documents")
-                        .HasForeignKey("ResumeId")
+                    b.HasOne("a2_tp3_job_connect.Entities.Vaga", "JobPosting")
+                        .WithMany("Approvals")
+                        .HasForeignKey("JobPostingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Resume");
+                    b.Navigation("ApprovedByUser");
+
+                    b.Navigation("JobPosting");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CandidateEvaluation", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.AvaliacaoCandidato", b =>
                 {
                     b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "EvaluatorUser")
                         .WithMany()
@@ -1320,7 +1348,7 @@ namespace a2_tp3_job_connect.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("a2_tp3_job_connect.Entities.SelectionProcess", "SelectionProcess")
+                    b.HasOne("a2_tp3_job_connect.Entities.ProcessoSeletivo", "SelectionProcess")
                         .WithMany("Evaluations")
                         .HasForeignKey("SelectionProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1331,31 +1359,224 @@ namespace a2_tp3_job_connect.Migrations
                     b.Navigation("SelectionProcess");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CandidateProfile", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Candidatura", b =>
                 {
-                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "User")
-                        .WithOne("CandidateProfile")
-                        .HasForeignKey("a2_tp3_job_connect.Entities.CandidateProfile", "UserId")
+                    b.HasOne("a2_tp3_job_connect.Entities.PerfilCandidato", "CandidateProfile")
+                        .WithMany("Applications")
+                        .HasForeignKey("CandidateProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("a2_tp3_job_connect.Entities.Vaga", "JobPosting")
+                        .WithMany("Applications")
+                        .HasForeignKey("JobPostingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("a2_tp3_job_connect.Entities.Curriculo", "Resume")
+                        .WithMany()
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CandidateProfile");
+
+                    b.Navigation("JobPosting");
+
+                    b.Navigation("Resume");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CompanyAddress", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Curriculo", b =>
                 {
-                    b.HasOne("a2_tp3_job_connect.Entities.Company", "Company")
+                    b.HasOne("a2_tp3_job_connect.Entities.PerfilCandidato", "CandidateProfile")
+                        .WithOne("Resume")
+                        .HasForeignKey("a2_tp3_job_connect.Entities.Curriculo", "CandidateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CandidateProfile");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.CurriculoHabilidade", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.Curriculo", "Resume")
+                        .WithMany("Skills")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("a2_tp3_job_connect.Entities.Habilidade", "Skill")
+                        .WithMany("ResumeSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
+
+                    b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.DocumentoCandidato", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.Curriculo", "Resume")
+                        .WithMany("Documents")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.EnderecoEmpresa", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.Empresa", "Company")
                         .WithOne("Address")
-                        .HasForeignKey("a2_tp3_job_connect.Entities.CompanyAddress", "CompanyId")
+                        .HasForeignKey("a2_tp3_job_connect.Entities.EnderecoEmpresa", "CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CompanyUser", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.EtapaSelecao", b =>
                 {
-                    b.HasOne("a2_tp3_job_connect.Entities.Company", "Company")
+                    b.HasOne("a2_tp3_job_connect.Entities.Empresa", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.ExperienciaProfissional", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.Curriculo", "Resume")
+                        .WithMany("WorkExperiences")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Feedback", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("a2_tp3_job_connect.Entities.ProcessoSeletivo", "SelectionProcess")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("SelectionProcessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("SelectionProcess");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Formacao", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.Curriculo", "Resume")
+                        .WithMany("Educations")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.HistoricoMovimentoEtapa", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("a2_tp3_job_connect.Entities.EtapaSelecao", "FromStage")
+                        .WithMany("FromMovements")
+                        .HasForeignKey("FromStageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("a2_tp3_job_connect.Entities.ProcessoSeletivo", "SelectionProcess")
+                        .WithMany("Movements")
+                        .HasForeignKey("SelectionProcessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("a2_tp3_job_connect.Entities.EtapaSelecao", "ToStage")
+                        .WithMany("ToMovements")
+                        .HasForeignKey("ToStageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ChangedByUser");
+
+                    b.Navigation("FromStage");
+
+                    b.Navigation("SelectionProcess");
+
+                    b.Navigation("ToStage");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Notificacao", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.PerfilCandidato", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "User")
+                        .WithOne("CandidateProfile")
+                        .HasForeignKey("a2_tp3_job_connect.Entities.PerfilCandidato", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.ProcessoSeletivo", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.EtapaSelecao", "CurrentStage")
+                        .WithMany("CurrentProcesses")
+                        .HasForeignKey("CurrentStageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("a2_tp3_job_connect.Entities.Candidatura", "JobApplication")
+                        .WithOne("SelectionProcess")
+                        .HasForeignKey("a2_tp3_job_connect.Entities.ProcessoSeletivo", "JobApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CurrentStage");
+
+                    b.Navigation("JobApplication");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.RegistroAuditoria", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "User")
+                        .WithMany("AuditLogs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.UsuarioEmpresa", b =>
+                {
+                    b.HasOne("a2_tp3_job_connect.Entities.Empresa", "Company")
                         .WithMany("Users")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1372,85 +1593,9 @@ namespace a2_tp3_job_connect.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Education", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Vaga", b =>
                 {
-                    b.HasOne("a2_tp3_job_connect.Entities.Resume", "Resume")
-                        .WithMany("Educations")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resume");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Feedback", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.SelectionProcess", "SelectionProcess")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("SelectionProcessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("SelectionProcess");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobApplication", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.CandidateProfile", "CandidateProfile")
-                        .WithMany("Applications")
-                        .HasForeignKey("CandidateProfileId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.JobPosting", "JobPosting")
-                        .WithMany("Applications")
-                        .HasForeignKey("JobPostingId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.Resume", "Resume")
-                        .WithMany()
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CandidateProfile");
-
-                    b.Navigation("JobPosting");
-
-                    b.Navigation("Resume");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobApproval", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "ApprovedByUser")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.JobPosting", "JobPosting")
-                        .WithMany("Approvals")
-                        .HasForeignKey("JobPostingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApprovedByUser");
-
-                    b.Navigation("JobPosting");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobPosting", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.Company", "Company")
+                    b.HasOne("a2_tp3_job_connect.Entities.Empresa", "Company")
                         .WithMany("Jobs")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1467,15 +1612,15 @@ namespace a2_tp3_job_connect.Migrations
                     b.Navigation("CreatedByUser");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobSkill", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.VagaHabilidade", b =>
                 {
-                    b.HasOne("a2_tp3_job_connect.Entities.JobPosting", "JobPosting")
+                    b.HasOne("a2_tp3_job_connect.Entities.Vaga", "JobPosting")
                         .WithMany("Skills")
                         .HasForeignKey("JobPostingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("a2_tp3_job_connect.Entities.Skill", "Skill")
+                    b.HasOne("a2_tp3_job_connect.Entities.Habilidade", "Skill")
                         .WithMany("JobSkills")
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1484,121 +1629,6 @@ namespace a2_tp3_job_connect.Migrations
                     b.Navigation("JobPosting");
 
                     b.Navigation("Skill");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Notification", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Resume", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.CandidateProfile", "CandidateProfile")
-                        .WithOne("Resume")
-                        .HasForeignKey("a2_tp3_job_connect.Entities.Resume", "CandidateProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CandidateProfile");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.ResumeSkill", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.Resume", "Resume")
-                        .WithMany("Skills")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.Skill", "Skill")
-                        .WithMany("ResumeSkills")
-                        .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Resume");
-
-                    b.Navigation("Skill");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.SelectionProcess", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.SelectionStage", "CurrentStage")
-                        .WithMany("CurrentProcesses")
-                        .HasForeignKey("CurrentStageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.JobApplication", "JobApplication")
-                        .WithOne("SelectionProcess")
-                        .HasForeignKey("a2_tp3_job_connect.Entities.SelectionProcess", "JobApplicationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CurrentStage");
-
-                    b.Navigation("JobApplication");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.SelectionStage", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.StageMovementHistory", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.ApplicationUser", "ChangedByUser")
-                        .WithMany()
-                        .HasForeignKey("ChangedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.SelectionStage", "FromStage")
-                        .WithMany("FromMovements")
-                        .HasForeignKey("FromStageId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("a2_tp3_job_connect.Entities.SelectionProcess", "SelectionProcess")
-                        .WithMany("Movements")
-                        .HasForeignKey("SelectionProcessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("a2_tp3_job_connect.Entities.SelectionStage", "ToStage")
-                        .WithMany("ToMovements")
-                        .HasForeignKey("ToStageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ChangedByUser");
-
-                    b.Navigation("FromStage");
-
-                    b.Navigation("SelectionProcess");
-
-                    b.Navigation("ToStage");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.WorkExperience", b =>
-                {
-                    b.HasOne("a2_tp3_job_connect.Entities.Resume", "Resume")
-                        .WithMany("WorkExperiences")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resume");
                 });
 
             modelBuilder.Entity("a2_tp3_job_connect.Entities.ApplicationUser", b =>
@@ -1614,37 +1644,12 @@ namespace a2_tp3_job_connect.Migrations
                     b.Navigation("Notifications");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.CandidateProfile", b =>
-                {
-                    b.Navigation("Applications");
-
-                    b.Navigation("Resume");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Company", b =>
-                {
-                    b.Navigation("Address");
-
-                    b.Navigation("Jobs");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobApplication", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Candidatura", b =>
                 {
                     b.Navigation("SelectionProcess");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.JobPosting", b =>
-                {
-                    b.Navigation("Applications");
-
-                    b.Navigation("Approvals");
-
-                    b.Navigation("Skills");
-                });
-
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Resume", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Curriculo", b =>
                 {
                     b.Navigation("Documents");
 
@@ -1655,16 +1660,16 @@ namespace a2_tp3_job_connect.Migrations
                     b.Navigation("WorkExperiences");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.SelectionProcess", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Empresa", b =>
                 {
-                    b.Navigation("Evaluations");
+                    b.Navigation("Address");
 
-                    b.Navigation("Feedbacks");
+                    b.Navigation("Jobs");
 
-                    b.Navigation("Movements");
+                    b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.SelectionStage", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.EtapaSelecao", b =>
                 {
                     b.Navigation("CurrentProcesses");
 
@@ -1673,11 +1678,36 @@ namespace a2_tp3_job_connect.Migrations
                     b.Navigation("ToMovements");
                 });
 
-            modelBuilder.Entity("a2_tp3_job_connect.Entities.Skill", b =>
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Habilidade", b =>
                 {
                     b.Navigation("JobSkills");
 
                     b.Navigation("ResumeSkills");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.PerfilCandidato", b =>
+                {
+                    b.Navigation("Applications");
+
+                    b.Navigation("Resume");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.ProcessoSeletivo", b =>
+                {
+                    b.Navigation("Evaluations");
+
+                    b.Navigation("Feedbacks");
+
+                    b.Navigation("Movements");
+                });
+
+            modelBuilder.Entity("a2_tp3_job_connect.Entities.Vaga", b =>
+                {
+                    b.Navigation("Applications");
+
+                    b.Navigation("Approvals");
+
+                    b.Navigation("Skills");
                 });
 #pragma warning restore 612, 618
         }

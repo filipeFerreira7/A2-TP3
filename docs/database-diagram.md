@@ -1,73 +1,62 @@
-# Diagrama do Banco de Dados - JobConnect Pro
+# Diagrama de Banco - JobConnect Pro
 
 ```mermaid
 erDiagram
-    AspNetUsers ||--o| CandidateProfiles : "possui"
-    AspNetUsers ||--o{ CompanyUsers : "vincula"
-    AspNetUsers ||--o{ JobPostings : "cria"
-    AspNetUsers ||--o{ Notifications : "recebe"
-    AspNetUsers ||--o{ AuditLogs : "executa"
-    AspNetUsers ||--o{ JobApprovals : "aprova"
-    AspNetUsers ||--o{ CandidateEvaluations : "avalia"
-    AspNetUsers ||--o{ Feedbacks : "emite"
-    AspNetUsers ||--o{ StageMovementHistories : "movimenta"
+    AspNetUsers ||--o| PerfisCandidatos : possui
+    AspNetUsers ||--o{ UsuariosEmpresa : vincula
+    AspNetUsers ||--o{ Vagas : cria
+    AspNetUsers ||--o{ Notificacoes : recebe
+    AspNetUsers ||--o{ RegistrosAuditoria : executa
+    AspNetUsers ||--o{ AprovacoesVagas : aprova
 
-    Companies ||--o| CompanyAddresses : "tem"
-    Companies ||--o{ CompanyUsers : "possui"
-    Companies ||--o{ JobPostings : "publica"
-    Companies ||--o{ SelectionStages : "configura"
+    Empresas ||--o| EnderecosEmpresa : tem
+    Empresas ||--o{ UsuariosEmpresa : possui
+    Empresas ||--o{ Vagas : publica
+    Empresas ||--o{ EtapasSelecao : configura
 
-    JobPostings ||--o{ JobSkills : "requer"
-    Skills ||--o{ JobSkills : "classifica"
-    JobPostings ||--o{ JobApplications : "recebe"
-    JobPostings ||--o{ JobApprovals : "historico_aprovacao"
+    Vagas ||--o{ VagasHabilidades : requer
+    Habilidades ||--o{ VagasHabilidades : classifica
+    Vagas ||--o{ Candidaturas : recebe
+    Vagas ||--o{ AprovacoesVagas : historico
 
-    CandidateProfiles ||--o| Resumes : "mantem"
-    CandidateProfiles ||--o{ JobApplications : "realiza"
-    Resumes ||--o{ Educations : "contem"
-    Resumes ||--o{ WorkExperiences : "contem"
-    Resumes ||--o{ ResumeSkills : "lista"
-    Skills ||--o{ ResumeSkills : "domina"
-    Resumes ||--o{ CandidateDocuments : "anexa"
-    Resumes ||--o{ JobApplications : "usado_em"
+    PerfisCandidatos ||--o| Curriculos : mantem
+    PerfisCandidatos ||--o{ Candidaturas : realiza
+    Curriculos ||--o{ Formacoes : contem
+    Curriculos ||--o{ ExperienciasProfissionais : contem
+    Curriculos ||--o{ CurriculosHabilidades : lista
+    Habilidades ||--o{ CurriculosHabilidades : domina
+    Curriculos ||--o{ DocumentosCandidatos : anexa
 
-    JobApplications ||--o| SelectionProcesses : "inicia"
-    SelectionStages ||--o{ SelectionProcesses : "etapa_atual"
-    SelectionProcesses ||--o{ StageMovementHistories : "historico"
-    SelectionStages ||--o{ StageMovementHistories : "origem"
-    SelectionStages ||--o{ StageMovementHistories : "destino"
-    SelectionProcesses ||--o{ CandidateEvaluations : "avaliacoes"
-    SelectionProcesses ||--o{ Feedbacks : "feedbacks"
+    Candidaturas ||--o| ProcessosSeletivos : inicia
+    EtapasSelecao ||--o{ ProcessosSeletivos : etapa_atual
+    ProcessosSeletivos ||--o{ HistoricosMovimentosEtapas : historico
+    ProcessosSeletivos ||--o{ AvaliacoesCandidatos : avaliacoes
+    ProcessosSeletivos ||--o{ Feedbacks : feedbacks
 
-    Companies {
+    Empresas {
         uniqueidentifier Id PK
         nvarchar LegalName
         nvarchar TradeName
         nvarchar Cnpj UK
         nvarchar Email
+        nvarchar LinkedInUrl
         bit IsActive
         bit IsDeleted
     }
 
-    CompanyAddresses {
+    EnderecosEmpresa {
         uniqueidentifier Id PK
         uniqueidentifier CompanyId FK
         nvarchar ZipCode
         nvarchar Street
+        nvarchar Number
+        nvarchar District
         nvarchar City
         nvarchar State
         bit ValidatedByViaCep
     }
 
-    CompanyUsers {
-        uniqueidentifier Id PK
-        uniqueidentifier CompanyId FK
-        uniqueidentifier UserId FK
-        nvarchar Role
-        bit IsActive
-    }
-
-    JobPostings {
+    Vagas {
         uniqueidentifier Id PK
         uniqueidentifier CompanyId FK
         uniqueidentifier CreatedByUserId FK
@@ -79,77 +68,11 @@ erDiagram
         nvarchar Level
         int OpenPositions
         nvarchar Status
+        datetime2 PublishedAt
         datetime2 ClosingDate
     }
 
-    Skills {
-        uniqueidentifier Id PK
-        nvarchar Name UK
-        nvarchar Description
-    }
-
-    JobSkills {
-        uniqueidentifier Id PK
-        uniqueidentifier JobPostingId FK
-        uniqueidentifier SkillId FK
-        nvarchar RequirementType
-    }
-
-    CandidateProfiles {
-        uniqueidentifier Id PK
-        uniqueidentifier UserId FK
-        nvarchar FullName
-        nvarchar Cpf UK
-        date BirthDate
-        nvarchar LinkedInUrl
-        nvarchar PortfolioUrl
-    }
-
-    Resumes {
-        uniqueidentifier Id PK
-        uniqueidentifier CandidateProfileId FK
-        nvarchar Summary
-        bit IsPrimary
-    }
-
-    Educations {
-        uniqueidentifier Id PK
-        uniqueidentifier ResumeId FK
-        nvarchar Institution
-        nvarchar Course
-        nvarchar Degree
-        date StartDate
-        date EndDate
-    }
-
-    WorkExperiences {
-        uniqueidentifier Id PK
-        uniqueidentifier ResumeId FK
-        nvarchar CompanyName
-        nvarchar Position
-        nvarchar Description
-        date StartDate
-        date EndDate
-    }
-
-    ResumeSkills {
-        uniqueidentifier Id PK
-        uniqueidentifier ResumeId FK
-        uniqueidentifier SkillId FK
-        int ProficiencyLevel
-    }
-
-    CandidateDocuments {
-        uniqueidentifier Id PK
-        uniqueidentifier ResumeId FK
-        nvarchar Type
-        nvarchar FileName
-        nvarchar ContentType
-        nvarchar StoragePath
-        bigint SizeInBytes
-    }
-
-    JobApplications {
+    Candidaturas {
         uniqueidentifier Id PK
         uniqueidentifier JobPostingId FK
         uniqueidentifier CandidateProfileId FK
@@ -158,71 +81,11 @@ erDiagram
         datetime2 AppliedAt
     }
 
-    SelectionProcesses {
+    ProcessosSeletivos {
         uniqueidentifier Id PK
         uniqueidentifier JobApplicationId FK
         uniqueidentifier CurrentStageId FK
         bit IsFinished
     }
-
-    SelectionStages {
-        uniqueidentifier Id PK
-        uniqueidentifier CompanyId FK
-        nvarchar Name
-        int Order
-        bit IsDefaultInitialStage
-    }
-
-    StageMovementHistories {
-        uniqueidentifier Id PK
-        uniqueidentifier SelectionProcessId FK
-        uniqueidentifier FromStageId FK
-        uniqueidentifier ToStageId FK
-        uniqueidentifier ChangedByUserId FK
-        nvarchar ResultingStatus
-    }
-
-    CandidateEvaluations {
-        uniqueidentifier Id PK
-        uniqueidentifier SelectionProcessId FK
-        uniqueidentifier EvaluatorUserId FK
-        int Score
-        nvarchar Comments
-    }
-
-    Feedbacks {
-        uniqueidentifier Id PK
-        uniqueidentifier SelectionProcessId FK
-        uniqueidentifier CreatedByUserId FK
-        nvarchar Message
-        bit IsAutomatic
-        datetime2 SentAt
-    }
-
-    Notifications {
-        uniqueidentifier Id PK
-        uniqueidentifier UserId FK
-        nvarchar Type
-        nvarchar Title
-        nvarchar Message
-        bit IsRead
-    }
-
-    AuditLogs {
-        uniqueidentifier Id PK
-        uniqueidentifier UserId FK
-        nvarchar Action
-        nvarchar EntityName
-        uniqueidentifier EntityId
-        nvarchar PreviousValues
-        nvarchar NewValues
-    }
-
-    JobApprovals {
-        uniqueidentifier Id PK
-        uniqueidentifier JobPostingId FK
-        uniqueidentifier ApprovedByUserId FK
-        bit Approved
-        nvarchar Notes
-    }
 ```
+

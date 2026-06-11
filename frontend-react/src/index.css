@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #006d77;
+  --color-brand-strong: #0b4f57;
+  --color-accent: #f4a261;
+  --color-accent-strong: #d97706;
+  --color-soft: #f3f7f9;
+  --color-muted: #667085;
+  --color-ink: #17212b;
+  --color-line: #d9e1e8;
+  --color-surface: #ffffff;
+  --color-ok: #198754;
+  --color-danger: #b42318;
+  --color-sidebar-bg: #0f1a24;
+  --color-sidebar-text: #a0b3c6;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  color: var(--color-ink);
+  background: var(--color-soft);
+  margin: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn .25s ease; }

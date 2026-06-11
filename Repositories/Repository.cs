@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace a2_tp3_job_connect.Repositories;
 
 public class Repository<TEntity>(JobConnectDbContext context) : IRepository<TEntity>
-    where TEntity : BaseEntity
+    where TEntity : EntidadeBase
 {
     private readonly DbSet<TEntity> _set = context.Set<TEntity>();
 

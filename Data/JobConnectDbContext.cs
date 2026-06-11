@@ -8,27 +8,27 @@ namespace a2_tp3_job_connect.Data;
 public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
     : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
-    public DbSet<Company> Companies => Set<Company>();
-    public DbSet<CompanyAddress> CompanyAddresses => Set<CompanyAddress>();
-    public DbSet<CompanyUser> CompanyUsers => Set<CompanyUser>();
-    public DbSet<Skill> Skills => Set<Skill>();
-    public DbSet<JobPosting> JobPostings => Set<JobPosting>();
-    public DbSet<JobSkill> JobSkills => Set<JobSkill>();
-    public DbSet<CandidateProfile> CandidateProfiles => Set<CandidateProfile>();
-    public DbSet<Resume> Resumes => Set<Resume>();
-    public DbSet<Education> Educations => Set<Education>();
-    public DbSet<WorkExperience> WorkExperiences => Set<WorkExperience>();
-    public DbSet<ResumeSkill> ResumeSkills => Set<ResumeSkill>();
-    public DbSet<CandidateDocument> CandidateDocuments => Set<CandidateDocument>();
-    public DbSet<JobApplication> JobApplications => Set<JobApplication>();
-    public DbSet<SelectionProcess> SelectionProcesses => Set<SelectionProcess>();
-    public DbSet<SelectionStage> SelectionStages => Set<SelectionStage>();
-    public DbSet<StageMovementHistory> StageMovementHistories => Set<StageMovementHistory>();
-    public DbSet<CandidateEvaluation> CandidateEvaluations => Set<CandidateEvaluation>();
+    public DbSet<Empresa> Empresas => Set<Empresa>();
+    public DbSet<EnderecoEmpresa> EnderecosEmpresa => Set<EnderecoEmpresa>();
+    public DbSet<UsuarioEmpresa> UsuariosEmpresa => Set<UsuarioEmpresa>();
+    public DbSet<Habilidade> Habilidades => Set<Habilidade>();
+    public DbSet<Vaga> Vagas => Set<Vaga>();
+    public DbSet<VagaHabilidade> VagasHabilidades => Set<VagaHabilidade>();
+    public DbSet<PerfilCandidato> PerfisCandidatos => Set<PerfilCandidato>();
+    public DbSet<Curriculo> Curriculos => Set<Curriculo>();
+    public DbSet<Formacao> Formacoes => Set<Formacao>();
+    public DbSet<ExperienciaProfissional> ExperienciasProfissionais => Set<ExperienciaProfissional>();
+    public DbSet<CurriculoHabilidade> CurriculosHabilidades => Set<CurriculoHabilidade>();
+    public DbSet<DocumentoCandidato> DocumentosCandidatos => Set<DocumentoCandidato>();
+    public DbSet<Candidatura> Candidaturas => Set<Candidatura>();
+    public DbSet<ProcessoSeletivo> ProcessosSeletivos => Set<ProcessoSeletivo>();
+    public DbSet<EtapaSelecao> EtapasSelecao => Set<EtapaSelecao>();
+    public DbSet<HistoricoMovimentoEtapa> HistoricosMovimentosEtapas => Set<HistoricoMovimentoEtapa>();
+    public DbSet<AvaliacaoCandidato> AvaliacoesCandidatos => Set<AvaliacaoCandidato>();
     public DbSet<Feedback> Feedbacks => Set<Feedback>();
-    public DbSet<Notification> Notifications => Set<Notification>();
-    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
-    public DbSet<JobApproval> JobApprovals => Set<JobApproval>();
+    public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
+    public DbSet<RegistroAuditoria> RegistrosAuditoria => Set<RegistroAuditoria>();
+    public DbSet<AprovacaoVaga> AprovacoesVagas => Set<AprovacaoVaga>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -66,8 +66,9 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
 
     private static void ConfigureCompany(ModelBuilder builder)
     {
-        builder.Entity<Company>(entity =>
+        builder.Entity<Empresa>(entity =>
         {
+            entity.ToTable("Empresas");
             entity.HasIndex(x => x.Cnpj).IsUnique();
             entity.Property(x => x.LegalName).HasMaxLength(180).IsRequired();
             entity.Property(x => x.TradeName).HasMaxLength(120).IsRequired();
@@ -77,8 +78,9 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.Property(x => x.LinkedInUrl).HasMaxLength(300);
         });
 
-        builder.Entity<CompanyAddress>(entity =>
+        builder.Entity<EnderecoEmpresa>(entity =>
         {
+            entity.ToTable("EnderecosEmpresa");
             entity.HasIndex(x => x.CompanyId).IsUnique();
             entity.Property(x => x.ZipCode).HasMaxLength(8).IsRequired();
             entity.Property(x => x.Street).HasMaxLength(180).IsRequired();
@@ -87,11 +89,12 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.Property(x => x.District).HasMaxLength(100).IsRequired();
             entity.Property(x => x.City).HasMaxLength(100).IsRequired();
             entity.Property(x => x.State).HasMaxLength(2).IsRequired();
-            entity.HasOne(x => x.Company).WithOne(x => x.Address).HasForeignKey<CompanyAddress>(x => x.CompanyId);
+            entity.HasOne(x => x.Company).WithOne(x => x.Address).HasForeignKey<EnderecoEmpresa>(x => x.CompanyId);
         });
 
-        builder.Entity<CompanyUser>(entity =>
+        builder.Entity<UsuarioEmpresa>(entity =>
         {
+            entity.ToTable("UsuariosEmpresa");
             entity.HasIndex(x => new { x.CompanyId, x.UserId, x.Role }).IsUnique();
             entity.Property(x => x.Role).HasConversion<string>().HasMaxLength(32);
             entity.HasOne(x => x.Company).WithMany(x => x.Users).HasForeignKey(x => x.CompanyId);
@@ -101,15 +104,17 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
 
     private static void ConfigureJobs(ModelBuilder builder)
     {
-        builder.Entity<Skill>(entity =>
+        builder.Entity<Habilidade>(entity =>
         {
+            entity.ToTable("Habilidades");
             entity.HasIndex(x => x.Name).IsUnique();
             entity.Property(x => x.Name).HasMaxLength(80).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(300);
         });
 
-        builder.Entity<JobPosting>(entity =>
+        builder.Entity<Vaga>(entity =>
         {
+            entity.ToTable("Vagas");
             entity.HasIndex(x => new { x.CompanyId, x.Title, x.ClosingDate }).IsUnique();
             entity.Property(x => x.Title).HasMaxLength(140).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(4000).IsRequired();
@@ -123,16 +128,18 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.HasOne(x => x.CreatedByUser).WithMany(x => x.CreatedJobs).HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<JobSkill>(entity =>
+        builder.Entity<VagaHabilidade>(entity =>
         {
+            entity.ToTable("VagasHabilidades");
             entity.HasIndex(x => new { x.JobPostingId, x.SkillId }).IsUnique();
             entity.Property(x => x.RequirementType).HasConversion<string>().HasMaxLength(30);
             entity.HasOne(x => x.JobPosting).WithMany(x => x.Skills).HasForeignKey(x => x.JobPostingId);
             entity.HasOne(x => x.Skill).WithMany(x => x.JobSkills).HasForeignKey(x => x.SkillId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<JobApproval>(entity =>
+        builder.Entity<AprovacaoVaga>(entity =>
         {
+            entity.ToTable("AprovacoesVagas");
             entity.Property(x => x.Notes).HasMaxLength(1000);
             entity.HasOne(x => x.JobPosting).WithMany(x => x.Approvals).HasForeignKey(x => x.JobPostingId);
             entity.HasOne(x => x.ApprovedByUser).WithMany().HasForeignKey(x => x.ApprovedByUserId).OnDelete(DeleteBehavior.Restrict);
@@ -141,8 +148,9 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
 
     private static void ConfigureCandidate(ModelBuilder builder)
     {
-        builder.Entity<CandidateProfile>(entity =>
+        builder.Entity<PerfilCandidato>(entity =>
         {
+            entity.ToTable("PerfisCandidatos");
             entity.HasIndex(x => x.UserId).IsUnique();
             entity.HasIndex(x => x.Cpf).IsUnique();
             entity.Property(x => x.FullName).HasMaxLength(160).IsRequired();
@@ -150,41 +158,46 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.Property(x => x.PhoneNumber).HasMaxLength(25);
             entity.Property(x => x.LinkedInUrl).HasMaxLength(300);
             entity.Property(x => x.PortfolioUrl).HasMaxLength(300);
-            entity.HasOne(x => x.User).WithOne(x => x.CandidateProfile).HasForeignKey<CandidateProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.User).WithOne(x => x.CandidateProfile).HasForeignKey<PerfilCandidato>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<Resume>(entity =>
+        builder.Entity<Curriculo>(entity =>
         {
+            entity.ToTable("Curriculos");
             entity.HasIndex(x => x.CandidateProfileId).IsUnique();
             entity.Property(x => x.Summary).HasMaxLength(2000).IsRequired();
-            entity.HasOne(x => x.CandidateProfile).WithOne(x => x.Resume).HasForeignKey<Resume>(x => x.CandidateProfileId);
+            entity.HasOne(x => x.CandidateProfile).WithOne(x => x.Resume).HasForeignKey<Curriculo>(x => x.CandidateProfileId);
         });
 
-        builder.Entity<Education>(entity =>
+        builder.Entity<Formacao>(entity =>
         {
+            entity.ToTable("Formacoes");
             entity.Property(x => x.Institution).HasMaxLength(160).IsRequired();
             entity.Property(x => x.Course).HasMaxLength(140).IsRequired();
             entity.Property(x => x.Degree).HasMaxLength(80).IsRequired();
             entity.HasOne(x => x.Resume).WithMany(x => x.Educations).HasForeignKey(x => x.ResumeId);
         });
 
-        builder.Entity<WorkExperience>(entity =>
+        builder.Entity<ExperienciaProfissional>(entity =>
         {
+            entity.ToTable("ExperienciasProfissionais");
             entity.Property(x => x.CompanyName).HasMaxLength(160).IsRequired();
             entity.Property(x => x.Position).HasMaxLength(140).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(2000).IsRequired();
             entity.HasOne(x => x.Resume).WithMany(x => x.WorkExperiences).HasForeignKey(x => x.ResumeId);
         });
 
-        builder.Entity<ResumeSkill>(entity =>
+        builder.Entity<CurriculoHabilidade>(entity =>
         {
+            entity.ToTable("CurriculosHabilidades");
             entity.HasIndex(x => new { x.ResumeId, x.SkillId }).IsUnique();
             entity.HasOne(x => x.Resume).WithMany(x => x.Skills).HasForeignKey(x => x.ResumeId);
             entity.HasOne(x => x.Skill).WithMany(x => x.ResumeSkills).HasForeignKey(x => x.SkillId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<CandidateDocument>(entity =>
+        builder.Entity<DocumentoCandidato>(entity =>
         {
+            entity.ToTable("DocumentosCandidatos");
             entity.Property(x => x.Type).HasConversion<string>().HasMaxLength(30);
             entity.Property(x => x.FileName).HasMaxLength(180).IsRequired();
             entity.Property(x => x.ContentType).HasMaxLength(100).IsRequired();
@@ -192,10 +205,14 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.HasOne(x => x.Resume).WithMany(x => x.Documents).HasForeignKey(x => x.ResumeId);
         });
 
-        builder.Entity<JobApplication>(entity =>
+        builder.Entity<Candidatura>(entity =>
         {
+            entity.ToTable("Candidaturas");
             entity.HasIndex(x => new { x.JobPostingId, x.CandidateProfileId }).IsUnique();
             entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30);
+            entity.Property(x => x.AvailabilityPreference).HasMaxLength(30);
+            entity.Property(x => x.SalaryExpectation).HasMaxLength(500);
+            entity.Property(x => x.ExperienceNotes).HasMaxLength(3000);
             entity.HasOne(x => x.JobPosting).WithMany(x => x.Applications).HasForeignKey(x => x.JobPostingId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.CandidateProfile).WithMany(x => x.Applications).HasForeignKey(x => x.CandidateProfileId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.Resume).WithMany().HasForeignKey(x => x.ResumeId).OnDelete(DeleteBehavior.Restrict);
@@ -204,22 +221,25 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
 
     private static void ConfigureSelectionProcess(ModelBuilder builder)
     {
-        builder.Entity<SelectionStage>(entity =>
+        builder.Entity<EtapaSelecao>(entity =>
         {
+            entity.ToTable("EtapasSelecao");
             entity.HasIndex(x => new { x.CompanyId, x.Name }).IsUnique();
             entity.Property(x => x.Name).HasMaxLength(80).IsRequired();
             entity.HasOne(x => x.Company).WithMany().HasForeignKey(x => x.CompanyId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<SelectionProcess>(entity =>
+        builder.Entity<ProcessoSeletivo>(entity =>
         {
+            entity.ToTable("ProcessosSeletivos");
             entity.HasIndex(x => x.JobApplicationId).IsUnique();
-            entity.HasOne(x => x.JobApplication).WithOne(x => x.SelectionProcess).HasForeignKey<SelectionProcess>(x => x.JobApplicationId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.JobApplication).WithOne(x => x.SelectionProcess).HasForeignKey<ProcessoSeletivo>(x => x.JobApplicationId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.CurrentStage).WithMany(x => x.CurrentProcesses).HasForeignKey(x => x.CurrentStageId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<StageMovementHistory>(entity =>
+        builder.Entity<HistoricoMovimentoEtapa>(entity =>
         {
+            entity.ToTable("HistoricosMovimentosEtapas");
             entity.Property(x => x.Notes).HasMaxLength(1000);
             entity.Property(x => x.ResultingStatus).HasConversion<string>().HasMaxLength(30);
             entity.HasOne(x => x.SelectionProcess).WithMany(x => x.Movements).HasForeignKey(x => x.SelectionProcessId);
@@ -228,8 +248,9 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.HasOne(x => x.ChangedByUser).WithMany().HasForeignKey(x => x.ChangedByUserId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<CandidateEvaluation>(entity =>
+        builder.Entity<AvaliacaoCandidato>(entity =>
         {
+            entity.ToTable("AvaliacoesCandidatos");
             entity.Property(x => x.Comments).HasMaxLength(2000).IsRequired();
             entity.HasOne(x => x.SelectionProcess).WithMany(x => x.Evaluations).HasForeignKey(x => x.SelectionProcessId);
             entity.HasOne(x => x.EvaluatorUser).WithMany().HasForeignKey(x => x.EvaluatorUserId).OnDelete(DeleteBehavior.Restrict);
@@ -237,6 +258,7 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
 
         builder.Entity<Feedback>(entity =>
         {
+            entity.ToTable("Feedbacks");
             entity.Property(x => x.Message).HasMaxLength(2000).IsRequired();
             entity.HasOne(x => x.SelectionProcess).WithMany(x => x.Feedbacks).HasForeignKey(x => x.SelectionProcessId);
             entity.HasOne(x => x.CreatedByUser).WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
@@ -245,16 +267,18 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
 
     private static void ConfigureSupportTables(ModelBuilder builder)
     {
-        builder.Entity<Notification>(entity =>
+        builder.Entity<Notificacao>(entity =>
         {
+            entity.ToTable("Notificacoes");
             entity.Property(x => x.Type).HasConversion<string>().HasMaxLength(40);
             entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Message).HasMaxLength(1000).IsRequired();
             entity.HasOne(x => x.User).WithMany(x => x.Notifications).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        builder.Entity<AuditLog>(entity =>
+        builder.Entity<RegistroAuditoria>(entity =>
         {
+            entity.ToTable("RegistrosAuditoria");
             entity.Property(x => x.Action).HasMaxLength(120).IsRequired();
             entity.Property(x => x.EntityName).HasMaxLength(120).IsRequired();
             entity.Property(x => x.PreviousValues).HasColumnType("nvarchar(max)");
@@ -266,32 +290,32 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
 
     private static void ConfigureSoftDeleteFilters(ModelBuilder builder)
     {
-        builder.Entity<Company>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<CompanyAddress>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<CompanyUser>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<Skill>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<JobPosting>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<JobSkill>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<CandidateProfile>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<Resume>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<Education>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<WorkExperience>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<ResumeSkill>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<CandidateDocument>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<JobApplication>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<SelectionProcess>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<SelectionStage>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<StageMovementHistory>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<CandidateEvaluation>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Empresa>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<EnderecoEmpresa>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<UsuarioEmpresa>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Habilidade>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Vaga>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<VagaHabilidade>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<PerfilCandidato>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Curriculo>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Formacao>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<ExperienciaProfissional>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<CurriculoHabilidade>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<DocumentoCandidato>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Candidatura>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<ProcessoSeletivo>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<EtapaSelecao>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<HistoricoMovimentoEtapa>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<AvaliacaoCandidato>().HasQueryFilter(x => !x.IsDeleted);
         builder.Entity<Feedback>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<Notification>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<AuditLog>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<JobApproval>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Notificacao>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<RegistroAuditoria>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<AprovacaoVaga>().HasQueryFilter(x => !x.IsDeleted);
     }
 
     private void ApplyAuditDates()
     {
-        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        foreach (var entry in ChangeTracker.Entries<EntidadeBase>())
         {
             if (entry.State == EntityState.Added)
             {
