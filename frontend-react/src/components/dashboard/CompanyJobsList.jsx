@@ -20,6 +20,9 @@ export default function CompanyJobsList({ jobs, onViewApplicants, onDelete }) {
           <div className="min-w-0 flex-1">
             <p className="m-0 text-sm font-bold text-ink">{job.title}</p>
             <p className="m-0 text-xs text-muted">{job.company} &middot; {statusLabel(job.status)} &middot; {job.applications || 0} candidatos</p>
+            {job.status === 'Rejected' && job.rejectionReason && (
+              <p className="m-0 mt-1 text-xs text-danger"><strong>Devolutiva:</strong> {job.rejectionReason}</p>
+            )}
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
             {onViewApplicants && (

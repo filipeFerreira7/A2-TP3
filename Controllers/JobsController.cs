@@ -100,7 +100,12 @@ public class JobsController(JobConnectDbContext context) : ControllerBase
                 job.OpenPositions,
                 Applications = job.Applications.Count,
                 Approved = job.Applications.Count(a => a.Status == ApplicationStatus.Approved),
-                Rejected = job.Applications.Count(a => a.Status == ApplicationStatus.Rejected)
+                Rejected = job.Applications.Count(a => a.Status == ApplicationStatus.Rejected),
+                RejectionReason = job.Approvals
+                    .Where(a => !a.Approved)
+                    .OrderByDescending(a => a.CreatedAt)
+                    .Select(a => a.Notes)
+                    .FirstOrDefault()
             })
             .ToListAsync();
 
@@ -145,6 +150,43 @@ public class JobsController(JobConnectDbContext context) : ControllerBase
 
         await context.SaveChangesAsync();
         return Ok(new { job.Id, job.Status, job.PublishedAt });
+    }
+
+    [HttpPost("{id:guid}/rejeitar")]
+    [Authorize(Roles = "Manager,Administrator")]
+    public async Task<IActionResult> Reject(Guid id, [FromBody] RejectJobRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Reason))
+            return BadRequest(new { error = "Informe o motivo da rejeicao." });
+
+        var userId = GetUserId();
+        var job = await context.Vagas.Include(item => item.Company).FirstOrDefaultAsync(item => item.Id == id);
+        if (job is null)
+            return NotFound();
+
+        if (!User.IsInRole("Administrator"))
+        {
+            var linked = await context.UsuariosEmpresa.AnyAsync(item =>
+                item.CompanyId == job.CompanyId && item.UserId == userId);
+            if (!linked)
+                return Forbid();
+        }
+
+        if (job.Status != JobStatus.PendingApproval)
+            return BadRequest(new { error = "Vaga nao esta pendente de aprovacao." });
+
+        job.Status = JobStatus.Rejected;
+        job.UpdatedAt = DateTime.UtcNow;
+        context.AprovacoesVagas.Add(new AprovacaoVaga
+        {
+            JobPostingId = job.Id,
+            ApprovedByUserId = userId,
+            Approved = false,
+            Notes = request.Reason.Trim()
+        });
+
+        await context.SaveChangesAsync();
+        return Ok(new { job.Id, job.Status });
     }
 
     [HttpGet("{id:guid}/editar")]

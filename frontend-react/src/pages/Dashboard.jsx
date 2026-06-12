@@ -117,19 +117,30 @@ export default function Dashboard() {
               <h2 className="m-0 text-lg font-bold text-ink">Vagas Pendentes de Aprovação</h2>
               <div className="flex flex-col gap-2">
                 {(data.jobs || []).filter(j => j.status === 'PendingApproval').map(job => (
-                  <div key={job.id} className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="m-0 text-sm font-bold text-ink">{job.title}</p>
-                      <p className="m-0 text-xs text-muted">{job.company}</p>
+                    <div key={job.id} className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="m-0 text-sm font-bold text-ink">{job.title}</p>
+                        <p className="m-0 text-xs text-muted">{job.company}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={async () => {
+                          try {
+                            await api.post(`/vagas/${job.id}/aprovar`);
+                            const { data: r } = await api.get('/vagas/minhas');
+                            setData(prev => ({ ...prev, jobs: r.data || r || [] }));
+                          } catch {}
+                        }}>Aprovar</Button>
+                        <Button size="sm" variant="danger" onClick={async () => {
+                          const reason = window.prompt('Motivo da rejeição (devolutiva para o RH):');
+                          if (reason === null) return;
+                          try {
+                            await api.post(`/vagas/${job.id}/rejeitar`, { reason });
+                            const { data: r } = await api.get('/vagas/minhas');
+                            setData(prev => ({ ...prev, jobs: r.data || r || [] }));
+                          } catch {}
+                        }}>Recusar</Button>
+                      </div>
                     </div>
-                    <Button size="sm" onClick={async () => {
-                      try {
-                        await api.post(`/vagas/${job.id}/aprovar`);
-                        const { data: r } = await api.get('/vagas/minhas');
-                        setData(prev => ({ ...prev, jobs: r.data || r || [] }));
-                      } catch {}
-                    }}>Aprovar</Button>
-                  </div>
                 ))}
               </div>
             </section>

@@ -109,6 +109,8 @@ public record EditJobResponse(
     IReadOnlyList<string> RequiredSkills,
     IReadOnlyList<string> DifferentialSkills);
 
+public record RejectJobRequest(string Reason);
+
 public record DashboardResponse(
     int PublishedJobs,
     int PendingJobs,
