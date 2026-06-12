@@ -349,27 +349,37 @@ public class ApplicationsController(JobConnectDbContext context, IWebHostEnviron
             .Include(a => a.CandidateProfile)
             .Include(a => a.JobPosting)
             .Include(a => a.Resume).ThenInclude(r => r!.Documents)
+            .Include(a => a.Resume).ThenInclude(r => r!.Educations)
+            .Include(a => a.Resume).ThenInclude(r => r!.WorkExperiences)
+            .Include(a => a.Resume).ThenInclude(r => r!.Skills).ThenInclude(s => s.Skill)
             .Include(a => a.SelectionProcess).ThenInclude(sp => sp!.CurrentStage)
             .Where(a => a.JobPostingId == jobId)
             .OrderByDescending(a => a.AppliedAt)
-            .Select(a => new ApplicantResponse(
-                a.Id,
-                a.JobPosting.Id,
-                a.JobPosting.Title,
-                a.CandidateProfile != null ? a.CandidateProfile.FullName : "N/A",
-                a.CandidateProfile != null ? a.CandidateProfile.Cpf : "N/A",
-                a.CandidateProfile != null ? a.CandidateProfile.PhoneNumber : null,
-                a.CandidateProfile != null ? a.CandidateProfile.LinkedInUrl : null,
-                a.CandidateProfile != null ? a.CandidateProfile.PortfolioUrl : null,
-                a.Resume != null ? a.Resume.Summary : "",
-                a.Status.ToString(),
-                a.SelectionProcess != null && a.SelectionProcess.CurrentStage != null
-                    ? a.SelectionProcess.CurrentStage.Name : null,
-                a.AppliedAt,
-                a.Resume != null && a.Resume.Documents.Any()
-                    ? a.Resume.Documents.OrderByDescending(d => d.CreatedAt).First().FileName
-                    : null))
             .ToListAsync();
+
+        var result = applicants.Select(a => new ApplicantResponse(
+            a.Id,
+            a.JobPosting.Id,
+            a.JobPosting.Title,
+            a.CandidateProfile?.Id,
+            a.CandidateProfile?.FullName ?? "N/A",
+            a.CandidateProfile?.Cpf ?? "N/A",
+            a.CandidateProfile?.PhoneNumber,
+            a.CandidateProfile?.LinkedInUrl,
+            a.CandidateProfile?.PortfolioUrl,
+            a.CandidateProfile?.AreaAtuacao,
+            a.CandidateProfile?.FotoPerfil,
+            a.Resume?.Summary ?? "",
+            a.AvailabilityPreference,
+            a.SalaryExpectation,
+            a.ExperienceNotes,
+            a.Status.ToString(),
+            a.SelectionProcess?.CurrentStage?.Name,
+            a.AppliedAt,
+            a.Resume?.Documents
+                .OrderByDescending(d => d.CreatedAt)
+                .FirstOrDefault()?.FileName))
+            .ToList();
 
         return Ok(applicants);
     }

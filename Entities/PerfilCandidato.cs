@@ -9,6 +9,8 @@ public class PerfilCandidato : EntidadeBase
     public string? PhoneNumber { get; set; }
     public string? LinkedInUrl { get; set; }
     public string? PortfolioUrl { get; set; }
+    public string? AreaAtuacao { get; set; }
+    public string? FotoPerfil { get; set; }
 
     public ApplicationUser User { get; set; } = null!;
     public Curriculo? Resume { get; set; }

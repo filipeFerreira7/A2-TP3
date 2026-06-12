@@ -26,17 +26,42 @@ public class AuthController(
             UserName = request.Email,
             Email = request.Email,
             FullName = request.FullName,
-            PrimaryPermission = request.PrimaryPermission,
+            PrimaryPermission = UserPermission.Candidate,
             EmailConfirmed = true
         };
 
         var result = await userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
-            return BadRequest(result.Errors.Select(error => error.Description));
+            var erros = result.Errors.Select(e => e.Description switch
+            {
+                string d when d.Contains("at least 8 characters") => "A senha deve ter pelo menos 8 caracteres.",
+                string d when d.Contains("at least one lowercase") => "A senha deve conter pelo menos uma letra min\u00fascula.",
+                string d when d.Contains("at least one uppercase") => "A senha deve conter pelo menos uma letra mai\u00fascula.",
+                string d when d.Contains("at least one digit") => "A senha deve conter pelo menos um n\u00famero.",
+                string d when d.Contains("is already taken") => "Este email j\u00e1 est\u00e1 cadastrado.",
+                _ => e.Description
+            });
+            return BadRequest(erros);
         }
 
-        await AssignRoleAsync(user, request.PrimaryPermission.ToString());
+        await AssignRoleAsync(user, nameof(UserPermission.Candidate));
+
+        var resume = new Curriculo { Summary = string.Empty, IsPrimary = true };
+        context.Curriculos.Add(resume);
+
+        var profile = new PerfilCandidato
+        {
+            UserId = user.Id,
+            FullName = request.FullName,
+            Cpf = request.Cpf.Trim(),
+            PhoneNumber = request.Phone,
+            AreaAtuacao = request.AreaAtuacao,
+            Resume = resume
+        };
+        context.PerfisCandidatos.Add(profile);
+        await context.SaveChangesAsync();
+
         var token = await tokenService.GenerateJwtTokenAsync(user);
         return Ok(new AuthResponse(token, await ToResponseAsync(user)));
     }

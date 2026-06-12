@@ -118,7 +118,10 @@ public static class JobConnectSeed
             "GraphQL", "Redis", "RabbitMQ", "Angular", "Vue.js", "Flutter", "Swift",
             "Kotlin", "Go", "Rust", "PHP", "Laravel", "WordPress", "SEO", "Google Ads",
             "Meta Ads", "Photoshop", "Illustrator", "After Effects", "Premiere", "AutoCAD",
-            "Revit", "SketchUp", "Excel", "SAP", "Oracle", "ServiceNow", "Jira", "Confluence"
+            "Revit", "SketchUp", "Excel", "SAP", "Oracle", "ServiceNow", "Jira", "Confluence",
+            "JavaScript", "HTML", "CSS", "SASS", "Tailwind CSS", "Bootstrap", "C++", "C",
+            "Ruby", "Rails", "Django", "Flask", "FastAPI", "Next.js", "NestJS", "Express.js",
+            "MySQL", "MariaDB", "Redis", "RabbitMQ", "Kafka", "Figma", "Adobe XD"
         };
 
         foreach (var name in names)

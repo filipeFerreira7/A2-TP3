@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function Sidebar() {
-  const { user, logout, isCompanyUser } = useAuth();
+  const { user, logout, isCompanyUser, isCandidate } = useAuth();
   const navigate = useNavigate();
 
   const navItems = [
@@ -42,6 +42,25 @@ export default function Sidebar() {
             {item.label}
           </NavLink>
         ))}
+
+        {isCandidate() && user && (
+          <>
+            <div className="text-[11px] text-sidebar-text/60 font-bold uppercase tracking-wider px-3 pt-4 pb-1">
+              Perfil
+            </div>
+            <NavLink
+              to="/meu-perfil"
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                  isActive ? 'bg-brand text-white' : 'text-sidebar-text hover:text-white hover:bg-white/5'
+                }`
+              }
+            >
+              <span className="text-lg w-6 text-center">👤</span>
+              Meu Perfil
+            </NavLink>
+          </>
+        )}
 
         {isCompanyUser() && user && (
           <>

@@ -14,6 +14,8 @@ import EditJob from './pages/EditJob';
 import ProcessTracking from './pages/ProcessTracking';
 import KanbanPage from './pages/KanbanPage';
 import Analytics from './pages/Analytics';
+import CompleteProfile from './pages/CompleteProfile';
+import MyProfile from './pages/MyProfile';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 
 function ProtectedRoute({ children, roles }) {
@@ -59,6 +61,12 @@ export default function App() {
         } />
         <Route path="/kanban" element={
           <ProtectedRoute roles={['Recruiter', 'Manager', 'Administrator']}><KanbanPage /></ProtectedRoute>
+        } />
+        <Route path="/completar-perfil" element={
+          <ProtectedRoute roles={['Candidate']}><CompleteProfile /></ProtectedRoute>
+        } />
+        <Route path="/meu-perfil" element={
+          <ProtectedRoute roles={['Candidate']}><MyProfile /></ProtectedRoute>
         } />
         <Route path="/analytics" element={
           <ProtectedRoute roles={['Recruiter', 'Manager', 'Administrator']}><Analytics /></ProtectedRoute>

@@ -107,12 +107,12 @@ public class PublicController(JobConnectDbContext context) : ControllerBase
     }
 
     [HttpGet("~/api/habilidades")]
-    public async Task<ActionResult<IReadOnlyList<string>>> Skills()
+    public async Task<ActionResult<IReadOnlyList<object>>> Skills()
     {
         var skills = await context.Habilidades
             .AsNoTracking()
             .OrderBy(skill => skill.Name)
-            .Select(skill => skill.Name)
+            .Select(skill => new { skill.Id, skill.Name })
             .ToListAsync();
 
         return Ok(skills);

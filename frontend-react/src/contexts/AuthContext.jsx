@@ -38,8 +38,8 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  const register = async (fullName, email, password, primaryPermission) => {
-    const { data } = await api.post('/auth/register', { fullName, email, password, primaryPermission });
+  const register = async (fullName, email, password, cpf, phone, areaAtuacao) => {
+    const { data } = await api.post('/auth/register', { fullName, email, password, cpf, phone, areaAtuacao, primaryPermission: 'Candidate' });
     localStorage.setItem(TOKEN_KEY, data.token);
     await fetchUser();
     return data;

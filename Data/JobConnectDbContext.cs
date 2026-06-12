@@ -159,6 +159,8 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.Property(x => x.PhoneNumber).HasMaxLength(25);
             entity.Property(x => x.LinkedInUrl).HasMaxLength(300);
             entity.Property(x => x.PortfolioUrl).HasMaxLength(300);
+            entity.Property(x => x.AreaAtuacao).HasMaxLength(60);
+            entity.Property(x => x.FotoPerfil).HasMaxLength(500);
             entity.HasOne(x => x.User).WithOne(x => x.CandidateProfile).HasForeignKey<PerfilCandidato>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         });
 

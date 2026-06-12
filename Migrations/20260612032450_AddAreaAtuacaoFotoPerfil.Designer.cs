@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using a2_tp3_job_connect.Data;
 
@@ -11,9 +12,11 @@ using a2_tp3_job_connect.Data;
 namespace a2_tp3_job_connect.Migrations
 {
     [DbContext(typeof(JobConnectDbContext))]
-    partial class JobConnectDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260612032450_AddAreaAtuacaoFotoPerfil")]
+    partial class AddAreaAtuacaoFotoPerfil
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -99,6 +99,16 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "uploads");
+Directory.CreateDirectory(uploadsPath);
+Directory.CreateDirectory(Path.Combine(uploadsPath, "fotos"));
+Directory.CreateDirectory(Path.Combine(uploadsPath, "resumes"));
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
+
 app.MapControllers();
 
 try

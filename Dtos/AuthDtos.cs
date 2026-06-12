@@ -6,6 +6,9 @@ public record RegisterRequest(
     string FullName,
     string Email,
     string Password,
+    string Cpf,
+    string? Phone,
+    string? AreaAtuacao,
     UserPermission PrimaryPermission = UserPermission.Candidate);
 
 public record LoginRequest(string Email, string Password);

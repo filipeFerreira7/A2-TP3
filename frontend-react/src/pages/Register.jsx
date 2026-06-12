@@ -8,13 +8,18 @@ export default function Register() {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  const handleRegister = async (fullName, email, password, permission) => {
+  const handleRegister = async (fullName, email, password, cpf, phone, areaAtuacao) => {
     try {
       setError('');
-      await register(fullName, email, password, permission);
-      navigate('/dashboard', { replace: true });
+      await register(fullName, email, password, cpf, phone, areaAtuacao);
+      navigate('/completar-perfil', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Erro ao cadastrar. Tente novamente.');
+      const data = err.response?.data;
+      if (Array.isArray(data)) {
+        setError(data.join('\n'));
+      } else {
+        setError(data?.error || data?.message || 'Erro ao cadastrar. Tente novamente.');
+      }
     }
   };
 
