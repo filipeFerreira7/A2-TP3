@@ -23,6 +23,7 @@ public class PerfilController(JobConnectDbContext context, IWebHostEnvironment e
             .Include(p => p.Resume!).ThenInclude(r => r.Educations)
             .Include(p => p.Resume!).ThenInclude(r => r.WorkExperiences)
             .Include(p => p.Resume!).ThenInclude(r => r.Skills).ThenInclude(s => s.Skill)
+            .Include(p => p.Resume!).ThenInclude(r => r.Documents)
             .FirstOrDefaultAsync(p => p.UserId == userId);
 
         if (profile is null)
@@ -51,6 +52,7 @@ public class PerfilController(JobConnectDbContext context, IWebHostEnvironment e
             .Include(p => p.Resume!).ThenInclude(r => r.Educations)
             .Include(p => p.Resume!).ThenInclude(r => r.WorkExperiences)
             .Include(p => p.Resume!).ThenInclude(r => r.Skills).ThenInclude(s => s.Skill)
+            .Include(p => p.Resume!).ThenInclude(r => r.Documents)
             .FirstOrDefaultAsync(p => p.UserId == userId);
 
         if (profile is null)
@@ -251,6 +253,46 @@ public class PerfilController(JobConnectDbContext context, IWebHostEnvironment e
         return Ok(new { exp.Id });
     }
 
+    [HttpDelete("educacao/{id}")]
+    public async Task<IActionResult> DeleteEducacao(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var profile = await context.PerfisCandidatos
+            .Include(p => p.Resume)
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (profile?.Resume is null)
+            return BadRequest(new { error = "Perfil nao encontrado." });
+
+        var formacao = await context.Formacoes.FindAsync(id);
+        if (formacao is null || formacao.ResumeId != profile.Resume.Id)
+            return NotFound(new { error = "Formacao nao encontrada." });
+
+        context.Formacoes.Remove(formacao);
+        await context.SaveChangesAsync();
+        return Ok(new { deleted = true });
+    }
+
+    [HttpDelete("experiencia/{id}")]
+    public async Task<IActionResult> DeleteExperiencia(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var profile = await context.PerfisCandidatos
+            .Include(p => p.Resume)
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (profile?.Resume is null)
+            return BadRequest(new { error = "Perfil nao encontrado." });
+
+        var exp = await context.ExperienciasProfissionais.FindAsync(id);
+        if (exp is null || exp.ResumeId != profile.Resume.Id)
+            return NotFound(new { error = "Experiencia nao encontrada." });
+
+        context.ExperienciasProfissionais.Remove(exp);
+        await context.SaveChangesAsync();
+        return Ok(new { deleted = true });
+    }
+
     [HttpPost("habilidades")]
     public async Task<IActionResult> AddHabilidade([FromBody] HabilidadeRequest request)
     {
@@ -282,6 +324,55 @@ public class PerfilController(JobConnectDbContext context, IWebHostEnvironment e
         return Ok(new { ch.Id });
     }
 
+    [HttpGet("resume/{id}")]
+    public async Task<IActionResult> DownloadResume(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var profile = await context.PerfisCandidatos
+            .Include(p => p.Resume!).ThenInclude(r => r.Documents)
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (profile?.Resume is null)
+            return BadRequest(new { error = "Perfil nao encontrado." });
+
+        var doc = profile.Resume.Documents.FirstOrDefault(d => d.Id == id && d.Type == DocumentType.ResumePdf);
+        if (doc is null)
+            return NotFound(new { error = "Curriculo nao encontrado." });
+
+        var resumesDir = Path.Combine(env.ContentRootPath, "uploads", "resumes");
+        var filePath = Path.Combine(resumesDir, doc.StoragePath);
+
+        if (!System.IO.File.Exists(filePath))
+            return NotFound(new { error = "Arquivo nao encontrado no servidor." });
+
+        return PhysicalFile(filePath, doc.ContentType, doc.FileName);
+    }
+
+    [HttpDelete("resume/{id}")]
+    public async Task<IActionResult> DeleteResume(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var profile = await context.PerfisCandidatos
+            .Include(p => p.Resume!).ThenInclude(r => r.Documents)
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (profile?.Resume is null)
+            return BadRequest(new { error = "Perfil nao encontrado." });
+
+        var doc = profile.Resume.Documents.FirstOrDefault(d => d.Id == id && d.Type == DocumentType.ResumePdf);
+        if (doc is null)
+            return NotFound(new { error = "Curriculo nao encontrado." });
+
+        var resumesDir = Path.Combine(env.ContentRootPath, "uploads", "resumes");
+        var filePath = Path.Combine(resumesDir, doc.StoragePath);
+        if (System.IO.File.Exists(filePath))
+            System.IO.File.Delete(filePath);
+
+        context.DocumentosCandidatos.Remove(doc);
+        await context.SaveChangesAsync();
+        return Ok(new { deleted = true });
+    }
+
     private static PerfilResponse ToResponse(PerfilCandidato profile)
     {
         var resume = profile.Resume;
@@ -304,6 +395,10 @@ public class PerfilController(JobConnectDbContext context, IWebHostEnvironment e
             ).ToList() ?? [],
             resume?.Skills.Select(s => new HabilidadeResponse(
                 s.Skill.Id, s.Skill.Name, s.ProficiencyLevel)
-            ).ToList() ?? []);
+            ).ToList() ?? [],
+            resume?.Documents
+                .Where(d => d.Type == DocumentType.ResumePdf)
+                .Select(d => new DocumentoResponse(d.Id, d.FileName, d.StoragePath, d.SizeInBytes))
+                .FirstOrDefault());
     }
 }

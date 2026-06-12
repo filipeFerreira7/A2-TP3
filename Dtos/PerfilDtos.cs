@@ -15,7 +15,8 @@ public record PerfilResponse(
     string? Summary,
     IReadOnlyList<EducacaoResponse> Educations,
     IReadOnlyList<ExperienciaResponse> WorkExperiences,
-    IReadOnlyList<HabilidadeResponse> Skills);
+    IReadOnlyList<HabilidadeResponse> Skills,
+    DocumentoResponse? ResumeDocument);
 
 public record EducacaoResponse(
     Guid Id,
@@ -38,6 +39,12 @@ public record HabilidadeResponse(
     Guid Id,
     string Name,
     int ProficiencyLevel);
+
+public record DocumentoResponse(
+    Guid Id,
+    string FileName,
+    string StoragePath,
+    long SizeInBytes);
 
 public record EducacaoRequest(
     string Institution,

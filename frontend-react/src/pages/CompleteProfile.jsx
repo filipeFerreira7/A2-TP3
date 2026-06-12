@@ -180,6 +180,7 @@ export default function CompleteProfile() {
       await api.put('/perfil', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
 
       for (const edu of educations) {
+        if (edu.id) continue;
         if (!edu.institution || !edu.course || !edu.startDate) continue;
         await api.post('/perfil/educacao', {
           institution: edu.institution, course: edu.course, degree: edu.degree,
@@ -188,6 +189,7 @@ export default function CompleteProfile() {
       }
 
       for (const exp of experiences) {
+        if (exp.id) continue;
         if (!exp.companyName || !exp.position || !exp.startDate) continue;
         await api.post('/perfil/experiencia', {
           companyName: exp.companyName, position: exp.position, description: exp.description,

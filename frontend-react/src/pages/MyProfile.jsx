@@ -31,6 +31,7 @@ export default function MyProfile() {
   const [fotoPreview, setFotoPreview] = useState(null);
   const [fotoFile, setFotoFile] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
+  const [resumeDoc, setResumeDoc] = useState(null);
 
   const [educations, setEducations] = useState([]);
   const [experiences, setExperiences] = useState([]);
@@ -71,6 +72,7 @@ export default function MyProfile() {
         setProfileSkills(loaded);
         setExistingSkillIds(new Set(loaded.map(s => s.id)));
         if (data.fotoPerfil) setFotoPreview(`/uploads/fotos/${data.fotoPerfil}`);
+        setResumeDoc(data.resumeDocument || null);
       }
     } catch {}
     setLoading(false);
@@ -329,6 +331,47 @@ export default function MyProfile() {
         </div>
       </div>
 
+      {/* Resume */}
+      <div className="bg-surface border border-line rounded-2xl p-6 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h3 className="m-0 text-lg font-bold text-ink">Currículo</h3>
+        </div>
+
+        {resumeDoc ? (
+          <div className="flex items-center justify-between p-4 bg-white border border-line rounded-xl">
+            <div className="flex items-center gap-3">
+              <span className="text-lg">📄</span>
+              <div>
+                <p className="m-0 text-sm font-bold text-ink">{resumeDoc.fileName}</p>
+                <p className="m-0 text-xs text-muted">{(resumeDoc.sizeInBytes / 1024).toFixed(1)} KB</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <a href={`/uploads/resumes/${resumeDoc.storagePath}`} target="_blank" rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-brand/10 text-brand border-none cursor-pointer hover:bg-brand/20 no-underline">
+                Visualizar
+              </a>
+              {editing && (
+                <button onClick={async () => {
+                  try { await api.delete(`/perfil/resume/${resumeDoc.id}`); setResumeDoc(null); }
+                  catch (e) { setError(e.response?.data?.error || 'Erro ao remover currículo.'); }
+                }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-50 text-danger border border-red-200 cursor-pointer hover:bg-red-100">
+                  Remover
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-muted m-0">Nenhum currículo enviado.</p>
+        )}
+
+        {editing && (
+          <input type="file" accept=".pdf" onChange={e => setResumeFile(e.target.files?.[0] || null)}
+            className="w-full text-sm text-muted file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-brand/10 file:text-brand hover:file:bg-brand/20" />
+        )}
+      </div>
+
       {/* Education */}
       <div className="bg-surface border border-line rounded-2xl p-6 flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -342,11 +385,24 @@ export default function MyProfile() {
 
         {educations.map((edu, i) => (
           <div key={i} className="flex flex-col gap-1 p-4 bg-white border border-line rounded-xl">
-            <p className="m-0 text-sm font-bold text-ink">{edu.course || 'Curso'}</p>
-            <p className="m-0 text-xs text-muted">{edu.institution} {edu.degree ? `· ${edu.degree}` : ''}</p>
-            <p className="m-0 text-xs text-muted">
-              {edu.startDate ? edu.startDate.split('-')[0] : '?'} — {edu.endDate ? edu.endDate.split('-')[0] : 'Presente'}
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="m-0 text-sm font-bold text-ink">{edu.course || 'Curso'}</p>
+                <p className="m-0 text-xs text-muted">{edu.institution} {edu.degree ? `· ${edu.degree}` : ''}</p>
+                <p className="m-0 text-xs text-muted">
+                  {edu.startDate ? edu.startDate.split('-')[0] : '?'} — {edu.endDate ? edu.endDate.split('-')[0] : 'Presente'}
+                </p>
+              </div>
+              {editing && edu.id && (
+                <button onClick={async () => {
+                  try { await api.delete(`/perfil/educacao/${edu.id}`); loadProfile(); }
+                  catch (e) { setError(e.response?.data?.error || 'Erro ao remover formação.'); }
+                }}
+                  className="text-danger text-xs font-bold bg-transparent border-none cursor-pointer hover:underline flex-shrink-0 ml-3">
+                  Remover
+                </button>
+              )}
+            </div>
           </div>
         ))}
 
@@ -411,12 +467,25 @@ export default function MyProfile() {
 
         {experiences.map((exp, i) => (
           <div key={i} className="flex flex-col gap-1 p-4 bg-white border border-line rounded-xl">
-            <p className="m-0 text-sm font-bold text-ink">{exp.position || 'Cargo'}</p>
-            <p className="m-0 text-xs text-muted">{exp.companyName}</p>
-            {exp.description && <p className="m-0 text-xs text-muted mt-1">{exp.description}</p>}
-            <p className="m-0 text-xs text-muted">
-              {exp.startDate ? exp.startDate.split('-')[0] : '?'} — {exp.isCurrentJob ? 'Atual' : exp.endDate ? exp.endDate.split('-')[0] : '?'}
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="m-0 text-sm font-bold text-ink">{exp.position || 'Cargo'}</p>
+                <p className="m-0 text-xs text-muted">{exp.companyName}</p>
+                {exp.description && <p className="m-0 text-xs text-muted mt-1">{exp.description}</p>}
+                <p className="m-0 text-xs text-muted">
+                  {exp.startDate ? exp.startDate.split('-')[0] : '?'} — {exp.isCurrentJob ? 'Atual' : exp.endDate ? exp.endDate.split('-')[0] : '?'}
+                </p>
+              </div>
+              {editing && exp.id && (
+                <button onClick={async () => {
+                  try { await api.delete(`/perfil/experiencia/${exp.id}`); loadProfile(); }
+                  catch (e) { setError(e.response?.data?.error || 'Erro ao remover experiência.'); }
+                }}
+                  className="text-danger text-xs font-bold bg-transparent border-none cursor-pointer hover:underline flex-shrink-0 ml-3">
+                  Remover
+                </button>
+              )}
+            </div>
           </div>
         ))}
 
