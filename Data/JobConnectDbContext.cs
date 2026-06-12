@@ -76,6 +76,7 @@ public class JobConnectDbContext(DbContextOptions<JobConnectDbContext> options)
             entity.Property(x => x.Email).HasMaxLength(180).IsRequired();
             entity.Property(x => x.PhoneNumber).HasMaxLength(25);
             entity.Property(x => x.LinkedInUrl).HasMaxLength(300);
+            entity.Property(x => x.Description).HasMaxLength(4000);
         });
 
         builder.Entity<EnderecoEmpresa>(entity =>

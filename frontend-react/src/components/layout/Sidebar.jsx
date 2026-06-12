@@ -20,9 +20,7 @@ export default function Sidebar() {
   return (
     <aside className="fixed top-0 left-0 bottom-0 w-[240px] flex flex-col bg-sidebar-bg text-sidebar-text z-50">
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/10">
-        <div className="grid w-10 h-10 place-items-center bg-brand text-white font-extrabold rounded-lg flex-shrink-0 text-sm">
-          JC
-        </div>
+        <img src="/logoo.png" alt="JobConnect Pro" className="w-16 h-16 rounded-lg flex-shrink-0 object-contain" />
         <div>
           <div className="text-white text-sm font-bold block">JobConnect Pro</div>
           <div className="text-[11px] text-sidebar-text block">Recrutamento inteligente</div>

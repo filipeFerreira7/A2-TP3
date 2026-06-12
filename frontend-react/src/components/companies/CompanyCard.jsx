@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import Card from '../ui/Card';
 
 export default function CompanyCard({ company }) {
-  const { tradeName, city, state } = company;
+  const { id, tradeName, city, state } = company;
+  const navigate = useNavigate();
+
   return (
-    <Card className="flex flex-col gap-2.5 h-full">
+    <Card className="flex flex-col gap-2.5 h-full" onClick={() => navigate(`/empresas/${id}`)}>
       <div className="flex items-start gap-3">
         <div className="grid w-10 h-10 place-items-center bg-brand/10 text-brand font-bold rounded-lg flex-shrink-0 text-sm">
           {tradeName?.[0] || '?'}

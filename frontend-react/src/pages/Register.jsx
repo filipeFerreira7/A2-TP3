@@ -21,7 +21,7 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-soft p-5">
       <div className="bg-surface border border-line rounded-2xl p-8 shadow-xl w-full max-w-sm flex flex-col items-center gap-5">
-        <div className="grid w-14 h-14 place-items-center bg-brand text-white font-extrabold rounded-xl text-xl">JC</div>
+        <img src="/logoo.png" alt="JobConnect Pro" className="w-16 h-16 rounded-xl object-contain" />
         <RegisterForm onSubmit={handleRegister} error={error} />
         <p className="m-0 text-xs text-muted">
           Já tem conta? <Link to="/login" className="text-brand font-bold underline-offset-2 hover:underline">Entrar</Link>

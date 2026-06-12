@@ -47,7 +47,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-soft p-5">
       <div className="bg-surface border border-line rounded-2xl p-8 shadow-xl w-full max-w-sm flex flex-col items-center gap-5">
-        <div className="grid w-14 h-14 place-items-center bg-brand text-white font-extrabold rounded-xl text-xl">JC</div>
+        <img src="/logoo.png" alt="JobConnect Pro" className="w-16 h-16 rounded-xl object-contain" />
         <LoginForm onSubmit={handleLogin} error={error} />
         <div className="flex items-center gap-3 w-full">
           <hr className="flex-1 border-line" />

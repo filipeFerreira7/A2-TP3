@@ -25,9 +25,11 @@ export default function CreateJob() {
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    title: '', companyId: (user?.companyId || '').toString(),
+    title: '', companyId: user?.companyId || '',
     location: '', workModel: 'Remote', level: 'Junior',
     salaryMin: '', salaryMax: '',
+    openPositions: '1',
+    closingDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
     description: '', requirements: '', benefits: ''
   });
 
@@ -39,7 +41,26 @@ export default function CreateJob() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const payload = { ...form, salaryMin: form.salaryMin ? parseFloat(form.salaryMin) : null, salaryMax: form.salaryMax ? parseFloat(form.salaryMax) : null };
+      const payload = {
+        companyId: form.companyId,
+        title: form.title,
+        description: form.description,
+        minimumSalary: form.salaryMin ? parseFloat(form.salaryMin) : null,
+        maximumSalary: form.salaryMax ? parseFloat(form.salaryMax) : null,
+        workModel: form.workModel,
+        level: form.level,
+        openPositions: parseInt(form.openPositions, 10) || 1,
+        closingDate: form.closingDate,
+        location: form.location,
+        benefits: form.benefits || null,
+        requirements: form.requirements || null,
+        companyDescription: null,
+        responsibilities: null,
+        schedule: null,
+        tags: null,
+        requiredSkills: [],
+        differentialSkills: []
+      };
       await api.post('/vagas', payload);
       navigate('/dashboard');
     } catch (err) {
@@ -106,6 +127,16 @@ export default function CreateJob() {
                 <input type="number" value={form.salaryMax} onChange={set('salaryMax')} placeholder="6000" className={inputClass} />
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-muted">Vagas Abertas</label>
+                <input type="number" min="1" value={form.openPositions} onChange={set('openPositions')} placeholder="1" className={inputClass} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-muted">Data de Encerramento</label>
+                <input type="date" required value={form.closingDate} onChange={set('closingDate')} className={inputClass} />
+              </div>
+            </div>
           </>
         )}
 
@@ -136,6 +167,7 @@ export default function CreateJob() {
               <p className="m-0"><strong>Modelo:</strong> {models.find(m => m.v === form.workModel)?.l}</p>
               <p className="m-0"><strong>Nível:</strong> {levels.find(l => l.v === form.level)?.l}</p>
               <p className="m-0"><strong>Salário:</strong> R$ {form.salaryMin || '—'} a R$ {form.salaryMax || '—'}</p>
+              <p className="m-0"><strong>Vagas:</strong> {form.openPositions} &middot; <strong>Encerramento:</strong> {new Date(form.closingDate).toLocaleDateString('pt-BR')}</p>
               <p className="m-0"><strong>Descrição:</strong> {form.description?.slice(0, 200)}{form.description?.length > 200 ? '...' : ''}</p>
               {form.requirements && <p className="m-0"><strong>Requisitos:</strong> {form.requirements?.slice(0, 150)}...</p>}
               {form.benefits && <p className="m-0"><strong>Benefícios:</strong> {form.benefits}</p>}

@@ -1,10 +1,12 @@
 using System.Security.Claims;
+using a2_tp3_job_connect.Data;
 using a2_tp3_job_connect.Dtos;
 using a2_tp3_job_connect.Entities;
 using a2_tp3_job_connect.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace a2_tp3_job_connect.Controllers;
 
@@ -13,7 +15,8 @@ namespace a2_tp3_job_connect.Controllers;
 public class AuthController(
     UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole<Guid>> roleManager,
-    ITokenService tokenService) : ControllerBase
+    ITokenService tokenService,
+    JobConnectDbContext context) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request)
@@ -84,11 +87,16 @@ public class AuthController(
     private async Task<CurrentUserResponse> ToResponseAsync(ApplicationUser user)
     {
         var roles = await userManager.GetRolesAsync(user);
+        var companyId = await context.UsuariosEmpresa
+            .Where(u => u.UserId == user.Id)
+            .Select(u => (Guid?)u.CompanyId)
+            .FirstOrDefaultAsync();
         return new CurrentUserResponse(
             user.Id,
             user.FullName,
             user.Email ?? string.Empty,
             user.PrimaryPermission,
-            roles.ToList());
+            roles.ToList(),
+            companyId);
     }
 }

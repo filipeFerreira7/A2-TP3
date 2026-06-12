@@ -77,7 +77,15 @@ public static class JobConnectSeed
         UserPermission permission)
     {
         var user = await userManager.FindByEmailAsync(email);
-        if (user is not null) return user;
+        if (user is not null)
+        {
+            if (!string.IsNullOrEmpty(password) && !await userManager.CheckPasswordAsync(user, password))
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                await userManager.ResetPasswordAsync(user, token, password);
+            }
+            return user;
+        }
 
         user = new ApplicationUser
         {
@@ -135,6 +143,7 @@ public static class JobConnectSeed
 
         async Task<Empresa> GetOrCreate(string cnpj, string legalName, string tradeName, string email, string phone, string linkedin,
             string zipCode, string street, string number, string district, string city, string state,
+            string description,
             ApplicationUser manager, ApplicationUser recruiter)
         {
             var existing = await context.Empresas.Include(e => e.Address).FirstOrDefaultAsync(e => e.Cnpj == cnpj);
@@ -150,7 +159,7 @@ public static class JobConnectSeed
             var company = new Empresa
             {
                 LegalName = legalName, TradeName = tradeName, Cnpj = cnpj, Email = email,
-                PhoneNumber = phone, LinkedInUrl = linkedin,
+                PhoneNumber = phone, LinkedInUrl = linkedin, Description = description,
                 Address = new EnderecoEmpresa
                 {
                     ZipCode = zipCode, Street = street, Number = number, District = district,
@@ -166,26 +175,51 @@ public static class JobConnectSeed
         companies.Add(await GetOrCreate("12345678000190", "AgileMind Consultoria Ltda", "AgileMind",
             "contato@agilemind.com.br", "(11) 3333-0100", "https://linkedin.com/company/agilemind",
             "04538132", "Av. Brigadeiro Faria Lima", "4500", "Itaim Bibi", "Sao Paulo", "SP",
+            @"A AgileMind e uma consultoria brasileira especializada em metodologias ageis e desenvolvimento de software sob medida. Ha mais de 6 anos no mercado, ajudamos empresas a transformar suas entregas por meio de praticas ageis, produtos digitais inovadores e equipes de alta performance.
+
+Nosso time e composto por mais de 150 profissionais apaixonados por tecnologia e inovacao, distribuidos em 4 estados brasileiros. Atendemos clientes de diversos segmentos, do varejo a saude, da educacao a financas.
+
+Valorizamos a diversidade, o aprendizado continuo e a colaboracao entre areas. Aqui, voce encontrara um ambiente descontraido, com autonomia para criar e espaco para crescer.",
             agileMind.Manager, agileMind.Recruiter));
 
         companies.Add(await GetOrCreate("22345678000191", "CloudForce Tecnologia S.A.", "CloudForce",
             "contato@cloudforce.com.br", "(31) 3333-0200", "https://linkedin.com/company/cloudforce",
             "30140071", "Av. do Contorno", "8500", "Savassi", "Belo Horizonte", "MG",
+            @"A CloudForce e uma empresa de tecnologia especializada em infraestrutura em nuvem e DevOps. Ha mais de 8 anos no mercado, ajudamos empresas a modernizar suas operacoes de TI por meio de arquiteturas cloud native, automacao e boas praticas de engenharia de infraestrutura.
+
+Nosso time e composto por mais de 80 profissionais apaixonados por tecnologia, incluindo engenheiros de nuvem, DevOps, arquitetos e especialistas em seguranca. Atendemos clientes de medio e grande porte em todo o Brasil.
+
+Valorizamos o aprendizado continuo, a autonomia e a colaboracao. Aqui, voce encontrara projetos desafiadores, liberdade para experimentar novas tecnologias e um ambiente que incentiva a inovacao.",
             cloudForce.Manager, cloudForce.Recruiter));
 
         companies.Add(await GetOrCreate("32345678000192", "DataMind Analytics Ltda", "DataMind",
             "contato@datamind.com.br", "(41) 3333-0300", "https://linkedin.com/company/datamind",
             "80420130", "Rua Padre Anchieta", "2500", "Bigorrilho", "Curitiba", "PR",
+            @"A DataMind e uma empresa de inteligencia de dados com sede em Curitiba, Parana. Somos especialistas em transformar dados brutos em decisoes estrategicas para empresas dos setores financeiro, varejo e saude.
+
+Ha mais de 8 anos no mercado, nossa equipe de 70 profissionais inclui cientistas de dados, engenheiros, analistas e especialistas em machine learning. Trabalhamos com tecnologia de ponta: Python, Azure ML, SQL Server, Power BI e ferramentas de big data.
+
+Acreditamos que os dados sao o ativo mais valioso das empresas, e nossa missao e ajudar organizacoes a extrair o maximo valor de suas informacoes. Valorizamos o rigor tecnico, a curiosidade intelectual e o trabalho em equipe.",
             dataMind.Manager, dataMind.Recruiter));
 
         companies.Add(await GetOrCreate("42345678000193", "InovaTech Solucoes Ltda", "InovaTech",
             "contato@inovatech.com.br", "(21) 3333-0400", "https://linkedin.com/company/inovatech",
             "20040002", "Av. Rio Branco", "200", "Centro", "Rio de Janeiro", "RJ",
+            @"A InovaTech e uma empresa de tecnologia focada em inovacao digital e transformacao de negocios. Com mais de 10 anos de experiencia, ajudamos empresas a criar produtos digitais inovadores que geram impacto real.
+
+Nossa equipe multidisciplinar combina expertise em design, engenharia e estrategia para entregar solucoes completas, desde aplicativos mobile ate plataformas web complexas.
+
+Acreditamos na tecnologia como motor de transformacao e buscamos pessoas apaixonadas por criar produtos que fazem a diferenca na vida das pessoas.",
             inovaTech.Manager, inovaTech.Recruiter));
 
         companies.Add(await GetOrCreate("52345678000194", "JobConnect Plataforma Ltda", "JobConnect",
             "contato@jobconnect.com", "(11) 3000-0000", "https://linkedin.com/company/jobconnect",
             "01310100", "Av. Paulista", "1000", "Bela Vista", "Sao Paulo", "SP",
+            @"O JobConnect e a plataforma mais inteligente para conectar talentos as oportunidades certas. Nossa missao e transformar o processo de recrutamento e selecao, tornando-o mais humano, eficiente e baseado em dados.
+
+Com recursos como匹配 inteligente de candidatos, pipeline Kanban e analytics avançados, ajudamos empresas a encontrar os melhores profissionais e candidatos a conquistar a vaga dos sonhos.
+
+Somos uma equipe jovem e inovadora, comprometida em revolucionar o mercado de recrutamento no Brasil.",
             jobConnect.Manager, jobConnect.Recruiter));
 
         return companies;
@@ -230,10 +264,10 @@ public static class JobConnectSeed
         if (await context.EtapasSelecao.AnyAsync(s => s.CompanyId == company.Id)) return;
 
         context.EtapasSelecao.AddRange(
-            new EtapaSelecao { Company = company, Name = "Inscricao Realizada", Order = 1, IsDefaultInitialStage = true },
-            new EtapaSelecao { Company = company, Name = "Entrevista RH", Order = 2 },
-            new EtapaSelecao { Company = company, Name = "Entrevista Gestor", Order = 3 },
-            new EtapaSelecao { Company = company, Name = "Proposta Final", Order = 4 });
+            new EtapaSelecao { Company = company, Name = "Inscricao Recebida", Order = 1, IsDefaultInitialStage = true },
+            new EtapaSelecao { Company = company, Name = "Triagem", Order = 2 },
+            new EtapaSelecao { Company = company, Name = "Entrevista Tecnica", Order = 3 },
+            new EtapaSelecao { Company = company, Name = "Feedback Final", Order = 4 });
     }
 
     private static async Task EnsureJobsAsync(

@@ -1,13 +1,4 @@
-const defaultSteps = [
-  { key: 'Applied', label: 'Aplicou', icon: '\u2714\uFE0F' },
-  { key: 'Screening', label: 'Triagem', icon: '\uD83D\uDD0D' },
-  { key: 'Interview', label: 'Entrevista', icon: '\uD83D\uDCAC' },
-  { key: 'Test', label: 'Teste T\u00e9cnico', icon: '\uD83D\uDCDD' },
-  { key: 'Offer', label: 'Proposta', icon: '\uD83C\uDF93' },
-  { key: 'Hired', label: 'Contratado', icon: '\uD83C\uDF89' },
-];
-
-export default function ProcessFlow({ currentStep = 0, steps = defaultSteps, style = {} }) {
+export default function ProcessFlow({ currentStep = 0, steps = [], style = {} }) {
   return (
     <div className="flex items-center gap-1 overflow-x-auto py-3" style={style}>
       {steps.map((step, i) => {

@@ -10,6 +10,24 @@ public record PublicCompanyResponse(
     string? City,
     string? State);
 
+public record CompanyDetailResponse(
+    Guid Id,
+    string LegalName,
+    string TradeName,
+    string Cnpj,
+    string Email,
+    string? PhoneNumber,
+    string? LinkedInUrl,
+    string? Description,
+    bool IsActive,
+    string? ZipCode,
+    string? Street,
+    string? Number,
+    string? Complement,
+    string? District,
+    string? City,
+    string? State);
+
 public record PublicJobResponse(
     Guid Id,
     string Title,

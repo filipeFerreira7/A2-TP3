@@ -287,6 +287,17 @@ public class ApplicationsController(JobConnectDbContext context, IWebHostEnviron
                 .OrderBy(s => s.Order)
                 .ToListAsync();
 
+            if (allStages.Count == 0)
+            {
+                allStages =
+                [
+                    new EtapaSelecao { CompanyId = companyId, Name = "Inscricao Recebida", Order = 1, IsDefaultInitialStage = true },
+                    new EtapaSelecao { CompanyId = companyId, Name = "Triagem", Order = 2 },
+                    new EtapaSelecao { CompanyId = companyId, Name = "Entrevista Tecnica", Order = 3 },
+                    new EtapaSelecao { CompanyId = companyId, Name = "Feedback Final", Order = 4 }
+                ];
+            }
+
             var process = app.SelectionProcess;
             var currentStage = process?.CurrentStage;
             var isFinished = process?.IsFinished ?? false;
@@ -424,8 +435,7 @@ public class ApplicationsController(JobConnectDbContext context, IWebHostEnviron
                 else if (newStatus == ApplicationStatus.Approved)
                 {
                     nextStage = allStages.LastOrDefault();
-                    if (nextStage is not null && nextStage.Id == currentStage?.Id)
-                        process.IsFinished = true;
+                    process.IsFinished = true;
                 }
 
                 if (nextStage is not null && nextStage.Id != currentStage?.Id)
@@ -474,6 +484,17 @@ public class ApplicationsController(JobConnectDbContext context, IWebHostEnviron
             .Where(s => s.CompanyId == companyId)
             .OrderBy(s => s.Order)
             .ToListAsync();
+
+        if (allStages.Count == 0)
+        {
+            allStages =
+            [
+                new EtapaSelecao { CompanyId = companyId, Name = "Inscricao Recebida", Order = 1, IsDefaultInitialStage = true },
+                new EtapaSelecao { CompanyId = companyId, Name = "Triagem", Order = 2 },
+                new EtapaSelecao { CompanyId = companyId, Name = "Entrevista Tecnica", Order = 3 },
+                new EtapaSelecao { CompanyId = companyId, Name = "Feedback Final", Order = 4 }
+            ];
+        }
 
         var currentStage = application.SelectionProcess?.CurrentStage;
         var isFinished = application.SelectionProcess?.IsFinished ?? false;

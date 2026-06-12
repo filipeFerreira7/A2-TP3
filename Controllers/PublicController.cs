@@ -77,6 +77,35 @@ public class PublicController(JobConnectDbContext context) : ControllerBase
         return Ok(companies);
     }
 
+    [HttpGet("~/api/empresas/{id:guid}")]
+    public async Task<ActionResult<CompanyDetailResponse>> CompanyDetail(Guid id)
+    {
+        var company = await context.Empresas
+            .AsNoTracking()
+            .Include(company => company.Address)
+            .FirstOrDefaultAsync(company => company.Id == id && company.IsActive);
+
+        return company is null
+            ? NotFound()
+            : Ok(new CompanyDetailResponse(
+                company.Id,
+                company.LegalName,
+                company.TradeName,
+                company.Cnpj,
+                company.Email,
+                company.PhoneNumber,
+                company.LinkedInUrl,
+                company.Description,
+                company.IsActive,
+                company.Address?.ZipCode,
+                company.Address?.Street,
+                company.Address?.Number,
+                company.Address?.Complement,
+                company.Address?.District,
+                company.Address?.City,
+                company.Address?.State));
+    }
+
     [HttpGet("~/api/habilidades")]
     public async Task<ActionResult<IReadOnlyList<string>>> Skills()
     {

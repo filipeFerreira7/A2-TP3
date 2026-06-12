@@ -19,4 +19,5 @@ public record CurrentUserResponse(
     string FullName,
     string Email,
     UserPermission PrimaryPermission,
-    IReadOnlyList<string> Roles);
+    IReadOnlyList<string> Roles,
+    Guid? CompanyId);

@@ -8,6 +8,7 @@ public class Empresa : EntidadeBase
     public string Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
     public string? LinkedInUrl { get; set; }
+    public string? Description { get; set; }
     public bool IsActive { get; set; } = true;
 
     public EnderecoEmpresa? Address { get; set; }

@@ -4,6 +4,7 @@ import AppLayout from './components/layout/AppLayout';
 import Home from './pages/Home';
 import Jobs from './pages/Jobs';
 import Companies from './pages/Companies';
+import CompaniesDetail from './pages/CompaniesDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/vagas" element={<Jobs />} />
         <Route path="/vagas/:id" element={<JobDetailPage />} />
         <Route path="/empresas" element={<Companies />} />
+        <Route path="/empresas/:id" element={<CompaniesDetail />} />
 
         {/* Protected routes */}
         <Route path="/dashboard" element={
