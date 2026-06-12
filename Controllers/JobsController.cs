@@ -98,7 +98,9 @@ public class JobsController(JobConnectDbContext context) : ControllerBase
                 Company = job.Company.TradeName,
                 job.Status,
                 job.OpenPositions,
-                Applications = job.Applications.Count
+                Applications = job.Applications.Count,
+                Approved = job.Applications.Count(a => a.Status == ApplicationStatus.Approved),
+                Rejected = job.Applications.Count(a => a.Status == ApplicationStatus.Rejected)
             })
             .ToListAsync();
 

@@ -457,7 +457,10 @@ public class ApplicationsController(JobConnectDbContext context, IWebHostEnviron
                         SelectionProcess = process,
                         FromStageId = currentStage?.Id,
                         ToStageId = nextStage.Id,
-                        ChangedByUserId = userId
+                        ChangedByUserId = userId,
+                        Notes = newStatus == ApplicationStatus.InProgress && !string.IsNullOrWhiteSpace(request.Feedback)
+                            ? request.Feedback.Trim()
+                            : null
                     });
                 }
             }

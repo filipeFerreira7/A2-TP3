@@ -152,6 +152,11 @@ export default function Dashboard() {
               feedback = window.prompt('Motivo da recusa (devolutiva para o candidato):');
               if (feedback === null) return;
             }
+            if (newStatus === 'InProgress') {
+              const plataforma = window.prompt('Informe a plataforma da entrevista (ex: Zoom, Teams, Google Meet):');
+              if (plataforma === null) return;
+              feedback = `via ${plataforma}`;
+            }
             try {
               await api.patch(`/candidaturas/${appId}/status`, { status: newStatus, feedback });
               const { data: r } = await api.get(`/candidaturas/vaga/${selectedJob}`);

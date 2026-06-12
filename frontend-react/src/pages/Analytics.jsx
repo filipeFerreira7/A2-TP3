@@ -12,12 +12,13 @@ export default function Analytics() {
   useEffect(() => {
     if (!isCompanyUser()) { setLoading(false); return; }
     Promise.all([
-      api.get('/vagas/stats').then(r => setStats(r.data || {})).catch(() => {}),
-      api.get('/vagas/minhas').then(r => {
-        const jobs = r.data.vagas || r.data || [];
-        setStats(prev => ({ ...prev, vagas: jobs }));
-      }).catch(() => {})
-    ]).finally(() => setLoading(false));
+      api.get('/vagas/stats').catch(() => ({ data: {} })),
+      api.get('/vagas/minhas').catch(() => ({ data: [] }))
+    ]).then(([statsRes, minhasRes]) => {
+      const statsData = statsRes.data || {};
+      const jobs = Array.isArray(minhasRes.data) ? minhasRes.data : (minhasRes.data?.vagas || []);
+      setStats({ ...statsData, vagas: jobs });
+    }).finally(() => setLoading(false));
   }, [isCompanyUser]);
 
   if (!isCompanyUser()) {
@@ -59,8 +60,8 @@ export default function Analytics() {
             <tbody>
               {vagas.map(job => {
                 const total = job.applications || 0;
-                const approved = 0;
-                const rejected = 0;
+                const approved = job.approved || 0;
+                const rejected = job.rejected || 0;
                 const rate = total > 0 ? ((approved / total) * 100).toFixed(1) : '—';
                 return (
                   <tr key={job.id} className="border-b border-line/50">
