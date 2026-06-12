@@ -381,7 +381,7 @@ public class ApplicationsController(JobConnectDbContext context, IWebHostEnviron
                 .FirstOrDefault()?.FileName))
             .ToList();
 
-        return Ok(applicants);
+        return Ok(result);
     }
 
     [HttpPatch("{appId:guid}/status")]

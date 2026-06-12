@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using a2_tp3_job_connect.Data;
 using a2_tp3_job_connect.Dtos;
 using a2_tp3_job_connect.Entities;
@@ -18,6 +19,18 @@ public class PublicController(JobConnectDbContext context) : ControllerBase
             .Include(job => job.Company)
             .Include(job => job.Skills).ThenInclude(jobSkill => jobSkill.Skill)
             .Where(job => job.Status == JobStatus.Published && job.ClosingDate >= DateTime.UtcNow);
+
+        if (User.Identity?.IsAuthenticated == true &&
+            (User.IsInRole("Recruiter") || User.IsInRole("Manager")) &&
+            !User.IsInRole("Administrator"))
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var companyIds = await context.UsuariosEmpresa
+                .Where(u => u.UserId == userId)
+                .Select(u => u.CompanyId)
+                .ToListAsync();
+            query = query.Where(job => companyIds.Contains(job.CompanyId));
+        }
 
         if (!string.IsNullOrWhiteSpace(search))
         {
