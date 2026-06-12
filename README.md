@@ -130,14 +130,6 @@ O Vite sobe em `http://localhost:5173` com proxy para `:5205`.
 
 ---
 
-## Contas de Demonstração
-
-| Papel | Email | Senha |
-|---|---|---|
-| Candidato | `candidato@jobconnect.com` | `JobConnect@123` |
-| Recrutador | `recrutador@jobconnect.com` | `JobConnect@123` |
-| Gestor | `gestor@jobconnect.com` | `JobConnect@123` |
-
 ### Empresas parceiras
 
 As empresas abaixo vêm pré-cadastradas com vagas publicadas, etapas de seleção e usuários vinculados:
