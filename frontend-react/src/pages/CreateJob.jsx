@@ -166,11 +166,15 @@ export default function CreateJob() {
               <p className="m-0"><strong>Local:</strong> {form.location}</p>
               <p className="m-0"><strong>Modelo:</strong> {models.find(m => m.v === form.workModel)?.l}</p>
               <p className="m-0"><strong>Nível:</strong> {levels.find(l => l.v === form.level)?.l}</p>
-              <p className="m-0"><strong>Salário:</strong> R$ {form.salaryMin || '—'} a R$ {form.salaryMax || '—'}</p>
-              <p className="m-0"><strong>Vagas:</strong> {form.openPositions} &middot; <strong>Encerramento:</strong> {new Date(form.closingDate).toLocaleDateString('pt-BR')}</p>
-              <p className="m-0"><strong>Descrição:</strong> {form.description?.slice(0, 200)}{form.description?.length > 200 ? '...' : ''}</p>
-              {form.requirements && <p className="m-0"><strong>Requisitos:</strong> {form.requirements?.slice(0, 150)}...</p>}
-              {form.benefits && <p className="m-0"><strong>Benefícios:</strong> {form.benefits}</p>}
+              {(form.salaryMin || form.salaryMax)
+                ? <p className="m-0"><strong>Salário:</strong> R$ {form.salaryMin || '0'} a R$ {form.salaryMax || '0'}</p>
+                : <p className="m-0"><strong>Salário:</strong> Não informado</p>}
+              <p className="m-0"><strong>Vagas:</strong> {form.openPositions} &middot; <strong>Encerramento:</strong> {form.closingDate ? new Date(form.closingDate).toLocaleDateString('pt-BR') : '—'}</p>
+              <p className="m-0"><strong>Descrição:</strong></p>
+              <p className="m-0 text-xs leading-relaxed whitespace-pre-wrap">{form.description}</p>
+              {form.requirements && <><p className="m-0 mt-1"><strong>Requisitos:</strong></p><p className="m-0 text-xs leading-relaxed whitespace-pre-wrap">{form.requirements}</p></>}
+              {form.benefits && <><p className="m-0 mt-1"><strong>Benefícios:</strong></p><p className="m-0 text-xs leading-relaxed whitespace-pre-wrap">{form.benefits}</p></>}
+              <p className="m-0 mt-2 text-xs text-muted">Ao criar a vaga, ela será enviada para aprovação do gestor.</p>
             </div>
           </>
         )}

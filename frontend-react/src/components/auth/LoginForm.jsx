@@ -1,9 +1,34 @@
 import { useState } from 'react';
 import Button from '../ui/Button';
 
+const allAccounts = [
+  { email: 'admin@jobconnect.com', label: 'Admin (Plataforma)', password: 'Admin@123' },
+  { email: 'gestor@jobconnect.com', label: 'Gestor (JobConnect)', password: 'JobConnect@123' },
+  { email: 'recrutador@jobconnect.com', label: 'Recrutador (JobConnect)', password: 'JobConnect@123' },
+  { email: 'candidato@jobconnect.com', label: 'Candidato (JobConnect)', password: 'JobConnect@123' },
+  { email: 'rodrigo.oliveira@agilemind.com.br', label: 'Gestor (AgileMind)', password: 'JobConnect@123' },
+  { email: 'luciana.ferreira@agilemind.com.br', label: 'Recrutador (AgileMind)', password: 'JobConnect@123' },
+  { email: 'amanda.costa@cloudforce.com.br', label: 'Gestor (CloudForce)', password: 'JobConnect@123' },
+  { email: 'paulo.henrique@cloudforce.com.br', label: 'Recrutador (CloudForce)', password: 'JobConnect@123' },
+  { email: 'fernanda.lima@datamind.com.br', label: 'Gestor (DataMind)', password: 'JobConnect@123' },
+  { email: 'ricardo.almeida@datamind.com.br', label: 'Recrutador (DataMind)', password: 'JobConnect@123' },
+  { email: 'mariana.santos@inovatech.com.br', label: 'Gestor (InovaTech)', password: 'JobConnect@123' },
+  { email: 'carlos.silva@inovatech.com.br', label: 'Recrutador (InovaTech)', password: 'JobConnect@123' },
+];
+
 export default function LoginForm({ onSubmit, error }) {
-  const [email, setEmail] = useState('candidato@jobconnect.com');
-  const [password, setPassword] = useState('JobConnect@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const fillAccount = (a) => {
+    setEmail(a.email);
+    setPassword(a.password);
+  };
+
+  const handleSelect = (e) => {
+    const selected = allAccounts.find(a => a.email === e.target.value);
+    if (selected) fillAccount(selected);
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -17,25 +42,8 @@ export default function LoginForm({ onSubmit, error }) {
       {error && <div className="bg-red-50 border border-red-200 text-danger text-xs font-bold px-3.5 py-2.5 rounded-lg">{error}</div>}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-muted">Email</label>
-        <select required value={email} onChange={e => { setEmail(e.target.value); setPassword('JobConnect@123'); }}
-          className="w-full min-h-[44px] px-3 py-2.5 bg-white border border-line rounded-lg outline-none text-sm focus:border-brand focus:ring-3 focus:ring-brand/15 transition-all">
-          <option value="candidato@jobconnect.com">candidato@jobconnect.com (Candidato)</option>
-          <option disabled>──────────</option>
-          <option value="gestor@jobconnect.com">gestor@jobconnect.com (Gestor - JobConnect)</option>
-          <option value="recrutador@jobconnect.com">recrutador@jobconnect.com (Recrutador - JobConnect)</option>
-          <option disabled>──────────</option>
-          <option value="rodrigo.oliveira@agilemind.com.br">rodrigo.oliveira@agilemind.com.br (Gestor - AgileMind)</option>
-          <option value="luciana.ferreira@agilemind.com.br">luciana.ferreira@agilemind.com.br (Recrutador - AgileMind)</option>
-          <option disabled>──────────</option>
-          <option value="amanda.costa@cloudforce.com.br">amanda.costa@cloudforce.com.br (Gestor - CloudForce)</option>
-          <option value="paulo.henrique@cloudforce.com.br">paulo.henrique@cloudforce.com.br (Recrutador - CloudForce)</option>
-          <option disabled>──────────</option>
-          <option value="fernanda.lima@datamind.com.br">fernanda.lima@datamind.com.br (Gestor - DataMind)</option>
-          <option value="ricardo.almeida@datamind.com.br">ricardo.almeida@datamind.com.br (Recrutador - DataMind)</option>
-          <option disabled>──────────</option>
-          <option value="mariana.santos@inovatech.com.br">mariana.santos@inovatech.com.br (Gestor - InovaTech)</option>
-          <option value="carlos.silva@inovatech.com.br">carlos.silva@inovatech.com.br (Recrutador - InovaTech)</option>
-        </select>
+        <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Digite seu email..."
+          className="w-full min-h-[44px] px-3 py-2.5 bg-white border border-line rounded-lg outline-none text-sm focus:border-brand focus:ring-3 focus:ring-brand/15 transition-all" />
       </div>
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-muted">Senha</label>
@@ -43,6 +51,16 @@ export default function LoginForm({ onSubmit, error }) {
           className="w-full min-h-[44px] px-3 py-2.5 bg-white border border-line rounded-lg outline-none text-sm focus:border-brand focus:ring-3 focus:ring-brand/15 transition-all" />
       </div>
       <Button type="submit" size="lg" className="w-full">Entrar</Button>
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-bold text-muted">Selecionar conta de teste</label>
+        <select onChange={handleSelect} defaultValue=""
+          className="w-full min-h-[44px] px-3 py-2.5 bg-white border border-line rounded-lg outline-none text-sm focus:border-brand focus:ring-3 focus:ring-brand/15 transition-all">
+          <option value="" disabled>Escolha uma conta...</option>
+          {allAccounts.map(a => (
+            <option key={a.email} value={a.email}>{a.label}</option>
+          ))}
+        </select>
+      </div>
     </form>
   );
 }

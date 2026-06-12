@@ -17,6 +17,7 @@ public static class JobConnectSeed
         await EnsureRolesAsync(roleManager);
 
         var candidate = await EnsureUserAsync(userManager, "Filipe Batista", "candidato@jobconnect.com", "JobConnect@123", UserPermission.Candidate);
+        await EnsureUserAsync(userManager, "Administrador", "admin@jobconnect.com", "Admin@123", UserPermission.Administrator);
 
         // JobConnect (plataforma)
         var jobConnectManager = await EnsureUserAsync(userManager, "Ana Oliveira", "gestor@jobconnect.com", "JobConnect@123", UserPermission.Manager);

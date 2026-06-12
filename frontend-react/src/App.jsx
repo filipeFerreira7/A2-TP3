@@ -16,6 +16,7 @@ import KanbanPage from './pages/KanbanPage';
 import Analytics from './pages/Analytics';
 import CompleteProfile from './pages/CompleteProfile';
 import MyProfile from './pages/MyProfile';
+import AdminPage from './pages/AdminPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 
 function ProtectedRoute({ children, roles }) {
@@ -51,16 +52,16 @@ export default function App() {
           <ProtectedRoute><Dashboard /></ProtectedRoute>
         } />
         <Route path="/criar-vaga" element={
-          <ProtectedRoute roles={['Recruiter', 'Manager', 'Administrator']}><CreateJob /></ProtectedRoute>
+          <ProtectedRoute roles={['Recruiter', 'Manager']}><CreateJob /></ProtectedRoute>
         } />
         <Route path="/vaga-edit/:id" element={
-          <ProtectedRoute roles={['Recruiter', 'Manager', 'Administrator']}><EditJob /></ProtectedRoute>
+          <ProtectedRoute roles={['Recruiter', 'Manager']}><EditJob /></ProtectedRoute>
         } />
         <Route path="/processo/:id" element={
           <ProtectedRoute roles={['Candidate']}><ProcessTracking /></ProtectedRoute>
         } />
         <Route path="/kanban" element={
-          <ProtectedRoute roles={['Recruiter', 'Manager', 'Administrator']}><KanbanPage /></ProtectedRoute>
+          <ProtectedRoute roles={['Recruiter', 'Manager']}><KanbanPage /></ProtectedRoute>
         } />
         <Route path="/completar-perfil" element={
           <ProtectedRoute roles={['Candidate']}><CompleteProfile /></ProtectedRoute>
@@ -70,6 +71,9 @@ export default function App() {
         } />
         <Route path="/analytics" element={
           <ProtectedRoute roles={['Recruiter', 'Manager', 'Administrator']}><Analytics /></ProtectedRoute>
+        } />
+        <Route path="/admin" element={
+          <ProtectedRoute roles={['Administrator']}><AdminPage /></ProtectedRoute>
         } />
       </Route>
 

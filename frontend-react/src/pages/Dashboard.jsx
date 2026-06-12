@@ -25,8 +25,10 @@ export default function Dashboard() {
 
     if (role === 'Candidate') {
       fetches.applications = api.get('/candidaturas/minhas').then(r => setData(prev => ({ ...prev, applications: r.data || [] })));
-    } else if (role === 'Recruiter' || role === 'Manager' || role === 'Administrator') {
+    } else if (role === 'Recruiter' || role === 'Manager') {
       fetches.jobs = api.get('/vagas/minhas').then(r => setData(prev => ({ ...prev, jobs: r.data || [] })));
+      fetches.stats = api.get('/vagas/stats').then(r => setData(prev => ({ ...prev, stats: r.data || {} })));
+    } else if (role === 'Administrator') {
       fetches.stats = api.get('/vagas/stats').then(r => setData(prev => ({ ...prev, stats: r.data || {} })));
     }
 
@@ -98,8 +100,25 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* Manager / Admin Dashboard */}
-      {(isManager() || isAdmin()) && (
+      {/* Admin Dashboard */}
+      {isAdmin() && (
+        <>
+          <DashboardCards items={[
+            { label: 'Empresas', value: data.stats?.totalEmpresas || '—' },
+            { label: 'Vagas', value: data.stats?.totalVagas || '—' },
+            { label: 'Candidatos', value: data.stats?.totalCandidatos || '—' },
+            { label: 'Contratações', value: data.stats?.totalContratacoes || '—' },
+          ]} />
+          <section className="bg-white border border-line rounded-2xl p-6 shadow-lg flex flex-col items-center gap-3 text-center">
+            <h2 className="m-0 text-lg font-bold text-ink">Painel Administrativo</h2>
+            <p className="m-0 text-sm text-muted max-w-md">Gerencie usuários, empresas e acompanhe relatórios gerais do sistema.</p>
+            <Button onClick={() => navigate('/admin')}>Acessar Administração</Button>
+          </section>
+        </>
+      )}
+
+      {/* Manager Dashboard */}
+      {isManager() && (
         <>
           <DashboardCards items={[
             { label: 'Vagas', value: data.jobs?.length || 0 },
